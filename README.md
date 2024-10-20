@@ -3,7 +3,6 @@
 WebBackup is a simple tool for backing up data from a server using FTP. It downloads a selected folder from the server and saves it.
 
 WebBackup is written in the .NET8 console application. It uses the [FluentFTP](https://github.com/robinrodricks/FluentFTP) library for FTP communication. 
-
 For nice console output, it uses the [Spectre.Console](https://github.com/spectreconsole/spectre.console) library.
 
 ## Configuration
