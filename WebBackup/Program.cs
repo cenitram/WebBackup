@@ -18,6 +18,8 @@ namespace WebBackup
 
             var websWithPassword = await UserInteraction.CollectPasswordsAsync(userSelectedWebs, tokenSource.Token);
 
+            await BackupManager.PerformBackup(websWithPassword, tokenSource.Token);
+
             UserInteraction.DisplayBackupStatus(websWithPassword, tokenSource.IsCancellationRequested);
         }
 
