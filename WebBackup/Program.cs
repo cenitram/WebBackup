@@ -1,10 +1,18 @@
-﻿namespace WebBackup
+﻿using Microsoft.Extensions.Configuration;
+
+namespace WebBackup
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            var config = LoadConfiguration();
+            var webSettings = config.GetSection("WebFtpSettings").Get<WebFtpSettings[]>() ?? [];
         }
+
+        private static IConfiguration LoadConfiguration() => new ConfigurationBuilder()
+            .AddJsonFile($"appsettings.json")
+            .AddUserSecrets<Program>()
+            .Build();
     }
 }
