@@ -21,7 +21,7 @@ namespace WebBackup
                             await ftpDownloader.ConnectAsync(cancellationToken);
 
                             var filesInDirectory = await ftpDownloader.GetNumberOfFilesInDirectoryAsync(cancellationToken);
-                            var task = ctx.AddTask($"{ftpHost.WebName}", maxValue: filesInDirectory - 1);
+                            var task = ctx.AddTask($"{ftpHost.Name}", maxValue: filesInDirectory - 1);
 
                             var fileDownloadTask = ftpDownloader.DownloadDirectoryAsync(new Progress<FtpProgress>(p =>
                             {

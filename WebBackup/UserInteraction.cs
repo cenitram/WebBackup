@@ -13,7 +13,7 @@ namespace WebBackup
                         "[grey](Press [blue]<space>[/] to toggle a web, " +
                         "[green]<enter>[/] to accept)[/]")
                     .AddChoices(webSettings)
-                    .UseConverter(webSetting => webSetting.WebName));
+                    .UseConverter(webSetting => webSetting.Name));
 
         public static async Task<List<(WebFtpSettings, string)>> CollectPasswordsAsync(IEnumerable<WebFtpSettings> userSelectedWebs, CancellationToken cancellationToken)
         {
@@ -24,7 +24,7 @@ namespace WebBackup
                 for (int attempt = 0; attempt < 3; attempt++)
                 {
                     var password = AnsiConsole.Prompt(
-                        new TextPrompt<string>($"Enter FTP password for {web.WebName}:")
+                        new TextPrompt<string>($"Enter FTP password for {web.Name}:")
                             .Secret());
 
                     if (await FtpDownloader.CheckUserCredentialsAsync(web, password, cancellationToken))
@@ -35,12 +35,12 @@ namespace WebBackup
                     }
                     else
                     {
-                        AnsiConsole.MarkupLine($"[red]Invalid credentials for {web.WebName}. Please try again.[/]");
+                        AnsiConsole.MarkupLine($"[red]Invalid credentials for {web.Name}. Please try again.[/]");
                     }
                 }
 
                 if (!isAuthenticated)
-                    AnsiConsole.MarkupLine($"[red]Failed to authenticate {web.WebName} after 3 attempts. Please check also Username field in appsettings.json. Skipping...[/]");
+                    AnsiConsole.MarkupLine($"[red]Failed to authenticate {web.Name} after 3 attempts. Please check also Username field in appsettings.json. Skipping...[/]");
             }
             return passwords;
         }
@@ -50,9 +50,9 @@ namespace WebBackup
             foreach (var (web, _) in passwords)
             {
                 if (isCancellationRequested)
-                    Console.WriteLine($"Backup for {web.WebName} was canceled. Already downloaded files can be found here:");
+                    Console.WriteLine($"Backup for {web.Name} was canceled. Already downloaded files can be found here:");
                 else
-                    Console.WriteLine($"Backup for {web.WebName} can be found here:");
+                    Console.WriteLine($"Backup for {web.Name} can be found here:");
 
                 var path = new TextPath($"{web.LocalPath}")
                     .RootStyle(new Style(foreground: Color.Blue))
