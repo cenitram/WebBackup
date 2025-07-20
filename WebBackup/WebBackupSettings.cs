@@ -1,8 +1,11 @@
 namespace WebBackup;
 
-[Obsolete("Use WebBackupSettings instead.")]
-public record MySqlBackupSettings(
+public record WebBackupSettings(
     string Name,
+    string Host,
+    string Username,
+    string LocalPath,
+    string RemotePath,
     string SshHost,
     int SshPort,
     string SshUsername,
@@ -11,5 +14,5 @@ public record MySqlBackupSettings(
     int MySqlPort,
     string MySqlUsername,
     string Database,
-    string LocalBackupPath
+    string MySqlLocalBackupPath
 );

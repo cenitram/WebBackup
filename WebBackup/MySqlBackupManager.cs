@@ -6,7 +6,7 @@ namespace WebBackup;
 
 public static class MySqlBackupManager
 {
-    public static async Task PerformMySqlBackup(MySqlBackupSettings settings, string mysqlPassword, CancellationToken cancellationToken)
+    public static async Task PerformMySqlBackup(WebBackupSettings settings, string mysqlPassword, CancellationToken cancellationToken)
     {
         // SSH tunnel setup
         using var client = new SshClient(settings.SshHost, settings.SshPort, settings.SshUsername, settings.SshPassword);
@@ -23,8 +23,8 @@ public static class MySqlBackupManager
 
         try
         {
-            string dumpFile = Path.Combine(settings.LocalBackupPath, $"{settings.Database}_{DateTime.Now:yyyyMMdd_HHmmss}.sql");
-            Directory.CreateDirectory(settings.LocalBackupPath);
+            string dumpFile = Path.Combine(settings.MySqlLocalBackupPath, $"{settings.Database}_{DateTime.Now:yyyyMMdd_HHmmss}.sql");
+            Directory.CreateDirectory(settings.MySqlLocalBackupPath);
 
             string connStr = $"server=127.0.0.1;port={settings.MySqlPort};user={settings.MySqlUsername};password={mysqlPassword};database={settings.Database};SslMode=none;convertzerodatetime=true;";
             using var conn = new MySqlConnection(connStr);

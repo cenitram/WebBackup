@@ -4,9 +4,9 @@ using Spectre.Console;
 
 namespace WebBackup;
 
-public class FtpDownloader(WebFtpSettings ftpSettings, string password) : IDisposable
+public class FtpDownloader(WebBackupSettings webSettings, string password) : IDisposable
 {
-    private readonly AsyncFtpClient _ftpClient = new(ftpSettings.Host, ftpSettings.Username, password);
+    private readonly AsyncFtpClient _ftpClient = new(webSettings.Host, webSettings.Username, password);
 
     public async Task ConnectAsync(CancellationToken cancellationToken) => await _ftpClient.AutoConnect(cancellationToken);
 
@@ -15,7 +15,7 @@ public class FtpDownloader(WebFtpSettings ftpSettings, string password) : IDispo
         try
         {
             // download a folder and all its files, and delete extra files on disk
-            await _ftpClient.DownloadDirectory(ftpSettings.LocalPath, ftpSettings.RemotePath, FtpFolderSyncMode.Mirror, progress: progress, token: cancellationToken);
+            await _ftpClient.DownloadDirectory(webSettings.LocalPath, webSettings.RemotePath, FtpFolderSyncMode.Mirror, progress: progress, token: cancellationToken);
         }
         catch (FtpAuthenticationException ex)
         {
@@ -39,7 +39,7 @@ public class FtpDownloader(WebFtpSettings ftpSettings, string password) : IDispo
     {
         try
         {
-            var items = await _ftpClient.GetListing(ftpSettings.RemotePath, FtpListOption.Recursive, cancellationToken);
+            var items = await _ftpClient.GetListing(webSettings.RemotePath, FtpListOption.Recursive, cancellationToken);
             return items.Count(item => item.Type == FtpObjectType.File);
         }
         catch (Exception ex)
@@ -49,11 +49,11 @@ public class FtpDownloader(WebFtpSettings ftpSettings, string password) : IDispo
         }
     }
 
-    public static async Task<bool> CheckUserCredentialsAsync(WebFtpSettings ftpSettings, string password, CancellationToken cancellationToken)
+    public static async Task<bool> CheckUserCredentialsAsync(WebBackupSettings webSettings, string password, CancellationToken cancellationToken)
     {
         try
         {
-            using var ftp = new AsyncFtpClient(ftpSettings.Host, ftpSettings.Username, password);
+            using var ftp = new AsyncFtpClient(webSettings.Host, webSettings.Username, password);
             await ftp.AutoConnect(cancellationToken);
             return true; // Credentials are valid
         }

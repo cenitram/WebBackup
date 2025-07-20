@@ -4,9 +4,9 @@ namespace WebBackup;
 
 public static class UserInteraction
 {
-    public static List<WebFtpSettings> PromptUserForWebSelection(WebFtpSettings[] webSettings) 
+    public static List<WebBackupSettings> PromptUserForWebSelection(WebBackupSettings[] webSettings) 
         => AnsiConsole.Prompt(
-            new MultiSelectionPrompt<WebFtpSettings>()
+            new MultiSelectionPrompt<WebBackupSettings>()
                 .Title("Which webs do you want to backup?")
                 .NotRequired()
                 .InstructionsText(
@@ -15,9 +15,9 @@ public static class UserInteraction
                 .AddChoices(webSettings)
                 .UseConverter(webSetting => webSetting.Name));
 
-    public static async Task<List<(WebFtpSettings, string)>> CollectPasswordsAsync(IEnumerable<WebFtpSettings> userSelectedWebs, CancellationToken cancellationToken)
+    public static async Task<List<(WebBackupSettings, string)>> CollectPasswordsAsync(IEnumerable<WebBackupSettings> userSelectedWebs, CancellationToken cancellationToken)
     {
-        List<(WebFtpSettings, string)> passwords = [];
+        List<(WebBackupSettings, string)> passwords = [];
         foreach (var web in userSelectedWebs)
         {
             bool isAuthenticated = false;
@@ -45,7 +45,7 @@ public static class UserInteraction
         return passwords;
     }
 
-    public static void DisplayBackupStatus(List<(WebFtpSettings web, string password)> passwords, bool isCancellationRequested)
+    public static void DisplayBackupStatus(List<(WebBackupSettings web, string password)> passwords, bool isCancellationRequested)
     {
         foreach (var (web, _) in passwords)
         {

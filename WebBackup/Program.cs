@@ -7,9 +7,8 @@ public class Program
     static async Task Main(string[] args)
     {
         var config = LoadConfiguration();
-        var webSettings = config.GetSection("WebFtpSettings").Get<WebFtpSettings[]>() ?? [];
-        var mysqlSettings = config.GetSection("MySqlBackupSettings").Get<MySqlBackupSettings[]>() ?? [];
-        var userSelectedWebs = UserInteraction.PromptUserForWebSelection(webSettings);
+        var webBackupSettings = config.GetSection("WebBackupSettings").Get<WebBackupSettings[]>() ?? [];
+        var userSelectedWebs = UserInteraction.PromptUserForWebSelection(webBackupSettings);
         using CancellationTokenSource tokenSource = new();
         Console.CancelKeyPress += (s, e) =>
         {
@@ -19,10 +18,10 @@ public class Program
 
 
         // Prompt for MySQL backups
-        foreach (var mysql in mysqlSettings)
+        foreach (var web in userSelectedWebs)
         {
-            var mysqlPassword = UserInteraction.PromptForMySqlPassword(mysql.Name);
-            await MySqlBackupManager.PerformMySqlBackup(mysql, mysqlPassword, tokenSource.Token);
+            var mysqlPassword = UserInteraction.PromptForMySqlPassword(web.Name);
+            await MySqlBackupManager.PerformMySqlBackup(web, mysqlPassword, tokenSource.Token);
         }
 
         var websWithPassword = await UserInteraction.CollectPasswordsAsync(userSelectedWebs, tokenSource.Token);
