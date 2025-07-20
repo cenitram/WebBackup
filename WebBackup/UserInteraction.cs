@@ -63,4 +63,11 @@ public static class UserInteraction
             AnsiConsole.WriteLine();
         }
     }
+
+    public static string PromptForMySqlPassword(string name)
+    {
+        return AnsiConsole.Prompt(
+            new TextPrompt<string>($"Enter MySQL password for {name}:")
+                .Secret());
+    }
 }
