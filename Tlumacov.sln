@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBackup", "WebBackup\WebBackup.csproj", "{7E19D255-31A8-4EC0-8C7A-8F1727D8B8C0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfficialBoardMailing", "OfficialBoardMailing\OfficialBoardMailing.csproj", "{FF8E334E-70A0-457E-B404-B0BA18948A47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7E19D255-31A8-4EC0-8C7A-8F1727D8B8C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E19D255-31A8-4EC0-8C7A-8F1727D8B8C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E19D255-31A8-4EC0-8C7A-8F1727D8B8C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF8E334E-70A0-457E-B404-B0BA18948A47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF8E334E-70A0-457E-B404-B0BA18948A47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF8E334E-70A0-457E-B404-B0BA18948A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF8E334E-70A0-457E-B404-B0BA18948A47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
