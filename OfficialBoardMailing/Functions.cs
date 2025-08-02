@@ -8,11 +8,14 @@ public class Functions
 {
     private readonly ILogger _logger;
     private readonly IConfiguration _config;
+    private readonly IOfficialBoardRepository _officialBoardRepository;
 
-    public Functions(ILoggerFactory loggerFactory, IConfiguration config)
+    public Functions(ILoggerFactory loggerFactory, IConfiguration config, IOfficialBoardRepository officialBoardRepository)
     {
         _logger = loggerFactory.CreateLogger<Functions>();
         _config = config;
+        _officialBoardRepository = officialBoardRepository;
+
     }
 
     [Function("MailNewFilesInOfficialBoard")]
@@ -26,30 +29,27 @@ public class Functions
         }
 
         // Read SSH config as object from local.settings.json
-        var sshSection = _config.GetSection("SshConfig");
         var sshConfig = new SshConfig
         {
-            Host = sshSection["Host"] ?? string.Empty,
-            User = sshSection["User"] ?? string.Empty,
-            Password = sshSection["Password"] ?? string.Empty
+            Host = _config["SshHost"] ?? string.Empty,
+            User = _config["SshUser"] ?? string.Empty,
+            Password = _config["SshPassword"] ?? string.Empty
         };
-        var connectionString = _config["ConnectionString"];
 
-        var connector = new SshMySqlConnector();
+        var connector = new SshConnector();
         try
         {
-            connector.Connect(
-                sshConfig: sshConfig,
-                connectionString: connectionString
-            );
-            _logger.LogInformation("Connected to MySQL over SSH successfully.");
-            // Example query
-            var result = connector.ExecuteQuery("SELECT NOW() AS CurrentTime;");
-            _logger.LogInformation($"Query result: {result.Rows[0]["CurrentTime"]}");
+            connector.Connect(sshConfig);
+            _logger.LogInformation("SSH tunnel with port forwarding established successfully.");
+            // Add further logic here if needed
+
+            _officialBoardRepository.GetUnsentDocuments();
+
+            _logger.LogInformation("Official board files processed successfully.");
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error connecting to MySQL over SSH: {ex.Message}");
+            _logger.LogError($"Error establishing SSH tunnel: {ex.Message}");
         }
         finally
         {
