@@ -9,23 +9,25 @@ public class Functions
     private readonly ILogger _logger;
     private readonly IConfiguration _config;
     private readonly IOfficialBoardRepository _officialBoardRepository;
+    private readonly IEmailSender _emailSender;
 
-    public Functions(ILoggerFactory loggerFactory, IConfiguration config, IOfficialBoardRepository officialBoardRepository)
+    public Functions(ILoggerFactory loggerFactory, IConfiguration config, IOfficialBoardRepository officialBoardRepository, IEmailSender emailSender)
     {
         _logger = loggerFactory.CreateLogger<Functions>();
         _config = config;
         _officialBoardRepository = officialBoardRepository;
+        _emailSender = emailSender;
 
     }
 
     [Function("MailNewFilesInOfficialBoard")]
-    public void Run([TimerTrigger("0 0 18 * * *", RunOnStartup = true)] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 0 18 * * *", RunOnStartup = true)] TimerInfo myTimer)
     {
-        _logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+        _logger.LogInformation("C# Timer trigger function executed at: {DateTimeNow}", DateTime.Now);
 
         if (myTimer.ScheduleStatus is not null)
         {
-            _logger.LogInformation($"Next timer schedule at: {myTimer.ScheduleStatus.Next}");
+            _logger.LogInformation("Next timer schedule at: {NextSchedule}", myTimer.ScheduleStatus.Next);
         }
 
         // Read SSH config as object from local.settings.json
@@ -43,13 +45,22 @@ public class Functions
             _logger.LogInformation("SSH tunnel with port forwarding established successfully.");
             // Add further logic here if needed
 
-            _officialBoardRepository.GetUnsentDocuments();
+            var unsentDocuments = _officialBoardRepository.GetUnsentDocuments().ToList();
+            if (unsentDocuments.Count == 0)
+            {
+                _logger.LogInformation("No unsent documents found.");
+                return;
+            }
+
+            await _emailSender.SendUnsentDocumentsAsync(unsentDocuments);
+
+            _officialBoardRepository.MarkDocumentsAsSent(unsentDocuments.Select(d => d.Id));
 
             _logger.LogInformation("Official board files processed successfully.");
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error establishing SSH tunnel: {ex.Message}");
+            _logger.LogError("Error establishing SSH tunnel: {ExceptionMessage}", ex.Message);
         }
         finally
         {

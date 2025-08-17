@@ -20,6 +20,7 @@ public class OfficialBoardRepository : IOfficialBoardRepository
     {
         if (connection == null)
             throw new InvalidOperationException("Not connected to database.");
+
         connection.Open();
         var list = new List<OfficialBoardModel>();
         using var cmd = new MySqlCommand(_query, connection);
