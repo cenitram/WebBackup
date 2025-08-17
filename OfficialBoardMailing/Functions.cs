@@ -43,7 +43,6 @@ public class Functions
         {
             connector.Connect(sshConfig);
             _logger.LogInformation("SSH tunnel with port forwarding established successfully.");
-            // Add further logic here if needed
 
             var unsentDocuments = _officialBoardRepository.GetUnsentDocuments().ToList();
             if (unsentDocuments.Count == 0)
@@ -52,7 +51,18 @@ public class Functions
                 return;
             }
 
-            await _emailSender.SendUnsentDocumentsAsync(unsentDocuments);
+            // TODO: Provide recipients from your own source (e.g., database or app input)
+            List<string> recipients = new();
+            // recipients.Add("recipient1@example.com");
+            // recipients.Add("recipient2@example.com");
+
+            if (recipients.Count == 0)
+            {
+                _logger.LogWarning("No email recipients provided. Skipping email send and not marking documents as sent.");
+                return;
+            }
+
+            await _emailSender.SendUnsentDocumentsAsync(unsentDocuments, recipients);
 
             _officialBoardRepository.MarkDocumentsAsSent(unsentDocuments.Select(d => d.Id));
 
