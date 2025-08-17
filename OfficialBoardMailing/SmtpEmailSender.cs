@@ -70,7 +70,9 @@ public class SmtpEmailSender : IEmailSender
             sb.Append("<tr>");
             sb.Append($"<td>{WebUtility.HtmlEncode(d.Name)}</td>");
             sb.Append($"<td>{d.DateOfPosting:yyyy-MM-dd}</td>");
-            sb.Append($"<td>{WebUtility.HtmlEncode($"{d.FileName}.{d.FileExtension}")}</td>");
+            var fileBase = $"{d.FileName}.{d.FileExtension}";
+            var url = $"https://www.tlumacov.cz/wp-content/plugins/uredni-deska/dokumenty/{Uri.EscapeDataString(fileBase)}";
+            sb.Append($"<td><a href=\"{url}\" target=\"_blank\" rel=\"noopener noreferrer\">{WebUtility.HtmlEncode(fileBase)}</a></td>");
             sb.Append($"<td>{WebUtility.HtmlEncode(d.Description ?? string.Empty)}</td>");
             sb.Append("</tr>");
         }
