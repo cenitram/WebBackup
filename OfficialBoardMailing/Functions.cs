@@ -52,9 +52,7 @@ public class Functions
             }
 
             // TODO: Provide recipients from your own source (e.g., database or app input)
-            List<string> recipients = new();
-            // recipients.Add("recipient1@example.com");
-            // recipients.Add("recipient2@example.com");
+            List<string> recipients = ["martinec98@gmail.com"];
 
             if (recipients.Count == 0)
             {
