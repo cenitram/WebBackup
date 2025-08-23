@@ -6,9 +6,17 @@ public class OfficialBoardRepository : IOfficialBoardRepository
 {
     private readonly MySqlConnection connection;
     private readonly string _query = @"
-        SELECT udemail.id, d.id as dokument_id, d.nazev, d.popis, d.datum_vyveseni, s.nazev, s.pripona FROM wp_uredni_deska_dokumenty as d 
-        JOIN wp_uredni_deska_soubory as s on s.dokument_id = d.id
-        JOIN wp_uredni_deska_emails_sent as udemail on udemail.dokument_id = d.id
+        SELECT 
+            udemail.id, 
+            d.id AS dokument_id, 
+            d.nazev AS dokument_nazev, 
+            d.popis, 
+            d.datum_vyveseni, 
+            s.nazev AS soubor_nazev, 
+            s.pripona 
+        FROM wp_uredni_deska_dokumenty AS d 
+        JOIN wp_uredni_deska_soubory AS s ON s.dokument_id = d.id
+        JOIN wp_uredni_deska_emails_sent AS udemail ON udemail.dokument_id = d.id
         WHERE udemail.email_sent = false;";
 
     public OfficialBoardRepository(MySqlConnection connection)
@@ -31,10 +39,10 @@ public class OfficialBoardRepository : IOfficialBoardRepository
             {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 DokumentId = reader.GetInt32(reader.GetOrdinal("dokument_id")),
-                Name = reader.GetString(reader.GetOrdinal("nazev")),
+                Name = reader.GetString(reader.GetOrdinal("dokument_nazev")),
                 Description = reader.IsDBNull(reader.GetOrdinal("popis")) ? null : reader.GetString(reader.GetOrdinal("popis")),
                 DateOfPosting = reader.GetDateTime(reader.GetOrdinal("datum_vyveseni")),
-                FileName = reader.GetString(reader.GetOrdinal("nazev")),
+                FileName = reader.GetString(reader.GetOrdinal("soubor_nazev")),
                 FileExtension = reader.GetString(reader.GetOrdinal("pripona"))
             });
         }
