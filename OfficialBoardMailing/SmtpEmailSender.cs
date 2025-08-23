@@ -60,6 +60,29 @@ public class SmtpEmailSender : IEmailSender
         _logger.LogInformation("Email with {Count} unsent document(s) sent to {RecipientCount} recipient(s).", docs.Count, recipientsList.Count);
     }
 
+    public async Task SendTestEmailAsync(CancellationToken cancellationToken = default)
+    {
+        using var message = new MailMessage
+        {
+            From = new MailAddress(_options.From, "Úřední deska Tlumačov"),
+            Subject = "Test email from Azure Function",
+            Body = "Hello from azure function",
+            IsBodyHtml = false
+        };
+        message.To.Add("martinec98@gmail.com");
+
+        using var client = new SmtpClient(_options.SmtpHost, _options.SmtpPort)
+        {
+            EnableSsl = _options.UseSsl,
+            Credentials = string.IsNullOrWhiteSpace(_options.SmtpUser)
+                ? CredentialCache.DefaultNetworkCredentials
+                : new NetworkCredential(_options.SmtpUser, _options.SmtpPassword)
+        };
+
+        await client.SendMailAsync(message, cancellationToken);
+        _logger.LogInformation("Test email sent to {Recipient}.", "martinec98@gmail.com");
+    }
+
     private static string BuildHtmlBody(List<OfficialBoardModel> docs)
     {
         var sb = new StringBuilder();
