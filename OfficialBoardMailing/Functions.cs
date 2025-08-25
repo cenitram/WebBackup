@@ -5,23 +5,14 @@ using OfficialBoardMailing.Repositories;
 
 namespace OfficialBoardMailing;
 
-public class Functions
+public class Functions(
+    ILoggerFactory loggerFactory,
+    IConfiguration config,
+    IOfficialBoardRepository officialBoardRepository,
+    IRecipientsRepository recipientsRepository,
+    IEmailSender emailSender)
 {
-    private readonly ILogger _logger;
-    private readonly IConfiguration _config;
-    private readonly IOfficialBoardRepository _officialBoardRepository;
-    private readonly IRecipientsRepository _recipientsRepository;
-    private readonly IEmailSender _emailSender;
-
-    public Functions(ILoggerFactory loggerFactory, IConfiguration config, IOfficialBoardRepository officialBoardRepository, IRecipientsRepository recipientsRepository, IEmailSender emailSender)
-    {
-        _logger = loggerFactory.CreateLogger<Functions>();
-        _config = config;
-        _officialBoardRepository = officialBoardRepository;
-        _recipientsRepository = recipientsRepository;
-        _emailSender = emailSender;
-
-    }
+    private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
     [Function("MailNewFilesInOfficialBoard")]
     public async Task Run([TimerTrigger("0 0 18 * * *", RunOnStartup = true)] TimerInfo myTimer)
@@ -36,9 +27,9 @@ public class Functions
         // Read SSH config as object from local.settings.json
         var sshConfig = new SshConfig
         {
-            Host = _config["SshHost"] ?? string.Empty,
-            User = _config["SshUser"] ?? string.Empty,
-            Password = _config["SshPassword"] ?? string.Empty
+            Host = config["SshHost"] ?? string.Empty,
+            User = config["SshUser"] ?? string.Empty,
+            Password = config["SshPassword"] ?? string.Empty
         };
 
         var connector = new SshConnector();
@@ -47,7 +38,7 @@ public class Functions
             connector.Connect(sshConfig);
             _logger.LogInformation("SSH tunnel with port forwarding established successfully.");
 
-            var unsentDocuments = _officialBoardRepository.GetUnsentDocuments();
+            var unsentDocuments = officialBoardRepository.GetUnsentDocuments();
             if (!unsentDocuments.Any())
             {
                 _logger.LogInformation("No unsent documents found.");
@@ -55,7 +46,7 @@ public class Functions
             }
 
             // TODO: Provide recipients from your own source (e.g., database or app input)
-            var recipients = _recipientsRepository.GetRecipientsEmails();
+            var recipients = recipientsRepository.GetRecipientsEmails();
 
             if (!recipients.Any())
             {
@@ -63,9 +54,9 @@ public class Functions
                 return;
             }
 
-            await _emailSender.SendUnsentDocumentsAsync(unsentDocuments, recipients);
+            await emailSender.SendUnsentDocumentsAsync(unsentDocuments, recipients);
 
-            _officialBoardRepository.MarkDocumentsAsSent(unsentDocuments.Select(d => d.Id));
+            officialBoardRepository.MarkDocumentsAsSent(unsentDocuments.Select(d => d.Id));
 
             _logger.LogInformation("Official board files processed successfully.");
         }
