@@ -6,23 +6,16 @@ using System.Text;
 
 namespace OfficialBoardMailing;
 
-public class SmtpEmailSender : IEmailSender
+public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSender> logger) : IEmailSender
 {
-    private readonly EmailOptions _options;
-    private readonly ILogger<SmtpEmailSender> _logger;
-
-    public SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSender> logger)
-    {
-        _options = options.Value;
-        _logger = logger;
-    }
+    private readonly EmailOptions _options = options.Value;
 
     public async Task SendUnsentDocumentsAsync(IEnumerable<OfficialBoardModel> documents, IEnumerable<string> recipients, CancellationToken cancellationToken = default)
     {
         var docs = documents?.ToList() ?? [];
         if (docs.Count == 0)
         {
-            _logger.LogInformation("No unsent documents to include in email. Skipping send.");
+            logger.LogInformation("No unsent documents to include in email. Skipping send.");
             return;
         }
 
@@ -33,7 +26,7 @@ public class SmtpEmailSender : IEmailSender
 
         if (recipientsList.Count == 0)
         {
-            _logger.LogWarning("Email recipients list is empty.");
+            logger.LogWarning("Email recipients list is empty.");
             return;
         }
 
@@ -57,7 +50,7 @@ public class SmtpEmailSender : IEmailSender
         };
 
         await client.SendMailAsync(message, cancellationToken);
-        _logger.LogInformation("Email with {Count} unsent document(s) sent to {RecipientCount} recipient(s).", docs.Count, recipientsList.Count);
+        logger.LogInformation("Email with {Count} unsent document(s) sent to {RecipientCount} recipient(s).", docs.Count, recipientsList.Count);
     }
 
     public async Task SendTestEmailAsync(CancellationToken cancellationToken = default)
@@ -80,7 +73,7 @@ public class SmtpEmailSender : IEmailSender
         };
 
         await client.SendMailAsync(message, cancellationToken);
-        _logger.LogInformation("Test email sent to {Recipient}.", "martinec98@gmail.com");
+        logger.LogInformation("Test email sent to {Recipient}.", "martinec98@gmail.com");
     }
 
     private static string BuildHtmlBody(List<OfficialBoardModel> docs)
