@@ -69,7 +69,7 @@ public class OfficialBoardRepository : IOfficialBoardRepository
         // Prepare a parameterized query for multiple IDs
         var idList = ids.ToList();
         var parameters = string.Join(", ", idList.Select((id, idx) => $"@id{idx}"));
-        var query = $"UPDATE wp_uredni_deska_emails_sent SET email_sent = true WHERE id IN ({parameters});";
+        var query = $"UPDATE wp_uredni_deska_emails_sent SET email_sent = true, date_sent = NOW() WHERE id IN ({parameters});";
 
         using var cmd = new MySqlCommand(query, connection);
         for (int i = 0; i < idList.Count; i++)
