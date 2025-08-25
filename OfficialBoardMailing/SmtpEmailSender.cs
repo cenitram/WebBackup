@@ -40,7 +40,7 @@ public class SmtpEmailSender : IEmailSender
         using var message = new MailMessage
         {
             From = new MailAddress(_options.From, _options.DisplayName),
-            Subject = $"Nové dokumenty na Úřední desce Tlumačova",
+            Subject = $"Nové dokumenty na Úřední desce Tlumačova ze dne {DateTime.Now:dd.MM.yyyy}",
             Body = BuildHtmlBody(docs),
             IsBodyHtml = true
         };
