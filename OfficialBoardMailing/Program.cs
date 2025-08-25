@@ -21,6 +21,7 @@ builder.Services.AddTransient<MySqlConnection>(_ =>
 );
 
 builder.Services.AddTransient<IOfficialBoardRepository, OfficialBoardRepository>();
+builder.Services.AddTransient<IRecipientsRepository, RecipientsRepository>();
 
 // Email sender configuration and registration
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));

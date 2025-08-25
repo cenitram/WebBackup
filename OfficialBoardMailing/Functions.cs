@@ -10,13 +10,15 @@ public class Functions
     private readonly ILogger _logger;
     private readonly IConfiguration _config;
     private readonly IOfficialBoardRepository _officialBoardRepository;
+    private readonly IRecipientsRepository _recipientsRepository;
     private readonly IEmailSender _emailSender;
 
-    public Functions(ILoggerFactory loggerFactory, IConfiguration config, IOfficialBoardRepository officialBoardRepository, IEmailSender emailSender)
+    public Functions(ILoggerFactory loggerFactory, IConfiguration config, IOfficialBoardRepository officialBoardRepository, IRecipientsRepository recipientsRepository, IEmailSender emailSender)
     {
         _logger = loggerFactory.CreateLogger<Functions>();
         _config = config;
         _officialBoardRepository = officialBoardRepository;
+        _recipientsRepository = recipientsRepository;
         _emailSender = emailSender;
 
     }
@@ -45,17 +47,17 @@ public class Functions
             connector.Connect(sshConfig);
             _logger.LogInformation("SSH tunnel with port forwarding established successfully.");
 
-            var unsentDocuments = _officialBoardRepository.GetUnsentDocuments().ToList();
-            if (unsentDocuments.Count == 0)
+            var unsentDocuments = _officialBoardRepository.GetUnsentDocuments();
+            if (!unsentDocuments.Any())
             {
                 _logger.LogInformation("No unsent documents found.");
                 return;
             }
 
             // TODO: Provide recipients from your own source (e.g., database or app input)
-            List<string> recipients = ["martinec98@gmail.com"];
+            var recipients = _recipientsRepository.GetRecipientsEmails();
 
-            if (recipients.Count == 0)
+            if (!recipients.Any())
             {
                 _logger.LogWarning("No email recipients provided. Skipping email send and not marking documents as sent.");
                 return;
