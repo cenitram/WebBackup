@@ -39,7 +39,7 @@ public class SmtpEmailSender : IEmailSender
 
         using var message = new MailMessage
         {
-            From = new MailAddress(_options.From),
+            From = new MailAddress(_options.From, _options.DisplayName),
             Subject = $"Nové dokumenty na Úřední desce Tlumačova",
             Body = BuildHtmlBody(docs),
             IsBodyHtml = true
