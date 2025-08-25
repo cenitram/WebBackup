@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using MySqlConnector;
 
 namespace OfficialBoardMailing;
@@ -5,6 +6,7 @@ namespace OfficialBoardMailing;
 public class OfficialBoardRepository : IOfficialBoardRepository
 {
     private readonly MySqlConnection connection;
+    private readonly ILogger<OfficialBoardRepository> logger;
     private readonly string _query = @"
         SELECT 
             udemail.id, 
@@ -19,9 +21,10 @@ public class OfficialBoardRepository : IOfficialBoardRepository
         JOIN wp_uredni_deska_emails_sent AS udemail ON udemail.dokument_id = d.id
         WHERE udemail.email_sent = false;";
 
-    public OfficialBoardRepository(MySqlConnection connection)
+    public OfficialBoardRepository(MySqlConnection connection, ILogger<OfficialBoardRepository> logger)
     {
         this.connection = connection;
+        this.logger = logger;
     }
 
     public IEnumerable<OfficialBoardModel> GetUnsentDocuments()
@@ -30,6 +33,7 @@ public class OfficialBoardRepository : IOfficialBoardRepository
             throw new InvalidOperationException("Not connected to database.");
 
         connection.Open();
+
         var list = new List<OfficialBoardModel>();
         using var cmd = new MySqlCommand(_query, connection);
         using var reader = cmd.ExecuteReader();
@@ -46,6 +50,9 @@ public class OfficialBoardRepository : IOfficialBoardRepository
                 FileExtension = reader.GetString(reader.GetOrdinal("pripona"))
             });
         }
+
+        connection.Close();
+
         return list;
     }
 
@@ -70,8 +77,9 @@ public class OfficialBoardRepository : IOfficialBoardRepository
             cmd.Parameters.AddWithValue($"@id{i}", idList[i]);
         }
         cmd.ExecuteNonQuery();
+        logger.LogInformation("Marked {Count} documents as sent.", idList.Count);
+        logger.LogInformation("IDs marked as sent: {Ids}", string.Join(", ", idList));
+
+        connection.Close();
     }
-
-
-
 }
