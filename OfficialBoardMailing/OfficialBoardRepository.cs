@@ -3,10 +3,8 @@ using MySqlConnector;
 
 namespace OfficialBoardMailing;
 
-public class OfficialBoardRepository : IOfficialBoardRepository
+public class OfficialBoardRepository(MySqlConnection connection, ILogger<OfficialBoardRepository> logger) : IOfficialBoardRepository
 {
-    private readonly MySqlConnection connection;
-    private readonly ILogger<OfficialBoardRepository> logger;
     private readonly string _query = @"
         SELECT 
             udemail.id, 
@@ -20,12 +18,6 @@ public class OfficialBoardRepository : IOfficialBoardRepository
         JOIN wp_uredni_deska_soubory AS s ON s.dokument_id = d.id
         JOIN wp_uredni_deska_emails_sent AS udemail ON udemail.dokument_id = d.id
         WHERE udemail.email_sent = false;";
-
-    public OfficialBoardRepository(MySqlConnection connection, ILogger<OfficialBoardRepository> logger)
-    {
-        this.connection = connection;
-        this.logger = logger;
-    }
 
     public IEnumerable<OfficialBoardModel> GetUnsentDocuments()
     {
