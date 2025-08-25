@@ -1,4 +1,4 @@
-namespace OfficialBoardMailing;
+namespace OfficialBoardMailing.Options;
 
 public class EmailOptions
 {

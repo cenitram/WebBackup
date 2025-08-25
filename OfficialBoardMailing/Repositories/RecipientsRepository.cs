@@ -1,6 +1,6 @@
 ﻿using MySqlConnector;
 
-namespace OfficialBoardMailing;
+namespace OfficialBoardMailing.Repositories;
 
 public class RecipientsRepository(MySqlConnection connection) : IRecipientsRepository
 {

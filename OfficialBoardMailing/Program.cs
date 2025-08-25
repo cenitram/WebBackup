@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MySqlConnector;
 using OfficialBoardMailing;
+using OfficialBoardMailing.Options;
+using OfficialBoardMailing.Repositories;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 

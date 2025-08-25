@@ -1,4 +1,4 @@
-﻿namespace OfficialBoardMailing;
+﻿namespace OfficialBoardMailing.Repositories;
 
 public interface IRecipientsRepository
 {

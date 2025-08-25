@@ -1,6 +1,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using OfficialBoardMailing.Repositories;
 
 namespace OfficialBoardMailing;
 

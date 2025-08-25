@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
 
-namespace OfficialBoardMailing;
+namespace OfficialBoardMailing.Repositories;
 
 public class OfficialBoardRepository(MySqlConnection connection, ILogger<OfficialBoardRepository> logger) : IOfficialBoardRepository
 {
