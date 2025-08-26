@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OfficialBoardMailing.Options;
+using RazorLight;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -35,7 +36,7 @@ public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSe
         {
             From = new MailAddress(_options.From, _options.DisplayName),
             Subject = $"Nové dokumenty na Úřední desce Tlumačova ze dne {DateTime.Now:dd.MM.yyyy}",
-            Body = BuildHtmlBody(docs),
+            Body = await BuildHtmlFromTemplate(docs),//BuildHtmlBody(docs),
             IsBodyHtml = true
         };
 
@@ -95,5 +96,21 @@ public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSe
         }
         sb.Append("</tbody></table><p>This is an automated message.</p>");
         return sb.ToString();
+    }
+
+    private async static Task<string> BuildHtmlFromTemplate(IEnumerable<OfficialBoardModel> docs)
+    {
+        var root = AppContext.BaseDirectory;
+        var engine = new RazorLightEngineBuilder()
+            .UseFileSystemProject(Path.Combine(root, "Templates"))
+            .UseMemoryCachingProvider()
+            .Build();
+
+        var model = new EmailTemplateModel { Date = DateTime.Now, BoardDocuments = docs };
+
+        string result = await engine.CompileRenderAsync("EmailTemplate.cshtml", model);
+
+        return result;
+
     }
 }

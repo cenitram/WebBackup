@@ -1,0 +1,406 @@
+﻿@model OfficialBoardMailing.EmailTemplateModel
+@using System
+
+<html lang="cs" style="margin:0;padding:0">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Nové soubory na Úřední desce</title>
+    <style type="text/css">
+        @@media screen and (max-width: 480px) {
+            .mailpoet_button {
+                width: 100% !important;
+            }
+        }
+
+        @@media screen and (max-width: 599px) {
+            .mailpoet_header {
+                padding: 10px 20px;
+            }
+
+            .mailpoet_button {
+                width: 100% !important;
+                padding: 5px 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            div,
+            .mailpoet_cols-two,
+            .mailpoet_cols-three {
+                max-width: 100% !important;
+            }
+        }
+
+        /* Documents table reusable styles */
+        .doc-table {
+            width: 100%;
+            border: 1px solid #e2d3d5;
+            border-collapse: collapse;
+            background: #ffffff;
+            font-family: 'source sans pro', 'helvetica neue', helvetica, arial, sans-serif;
+            font-size: 14px;
+            line-height: 20px;
+            color: #222222;
+        }
+
+        .doc-table th {
+            padding: 8px 10px;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: left;
+            background: #ac1424;
+            color: #ffffff;
+            border-right: 1px solid #93101e;
+        }
+
+        .doc-table td {
+            padding: 8px 10px;
+            border-top: 1px solid #e9dfe0;
+            border-right: 1px solid #f2e7e8;
+        }
+
+        .doc-table th:last-child,
+        .doc-table td:last-child {
+            border-right: none;
+        }
+
+        .doc-row-alt td {
+            background: #f9f2f3;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        a.doc-link {
+            color: #ac1424;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        /* Auto zebra striping (limited support in some Outlook versions) */
+        .doc-table tbody tr td {
+            background: #ffffff;
+        }
+
+        .doc-table tbody tr:nth-child(even) td {
+            background: #f9f2f3 !important;
+        }
+    </style>
+    <!--[if !mso]><!-- -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Merriweather+Sans:400,400i,700,700i"
+          rel="stylesheet" /><!--<![endif]-->
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="margin:0;padding:0;background-color:#ffffff">
+    <table class="mailpoet_template" width="100%" cellpadding="0" cellspacing="0">
+        <tbody>
+            <!-- Preheader for preview text, hidden in most clients -->
+            <tr>
+                <td class="mailpoet_preheader" style="display:none;visibility:hidden;mso-hide:all;font-size:1px;color:#333;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+                    <!-- Preheader text here -->
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="mailpoet-wrapper" valign="top"
+                    style="background-color:#fff">
+                    <!--[if mso]>
+                    <table align="center" width="660" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td class="mailpoet_content-wrapper" align="center" valign="top" width="660">
+                    <![endif]-->
+                    <table class="mailpoet_content-wrapper" width="660" cellpadding="0" cellspacing="0" style="background-color:#fff;max-width:660px;width:100%">
+                        <tbody>
+
+                            <tr>
+                                <td class="mailpoet_content-cols-two" align="left" bgcolor="#fff">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td align="center" style="font-size:0;">
+                                                <!--[if mso]>
+                                                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                    <tr>
+                                                        <td width="330" valign="top">
+                                                <![endif]-->
+                                                <div style="display:inline-block;max-width:330px;vertical-align:top;width:100%;">
+                                                    <table width="330" class="mailpoet_cols-two" cellpadding="0" cellspacing="0" align="left" style="width:100%;max-width:330px;table-layout:fixed;margin:auto;">
+                                                        <tr><td class="mailpoet_spacer" bgcolor="#fff" height="20"></td></tr>
+                                                        <tr>
+                                                            <td class="mailpoet_image mailpoet_padded_vertical mailpoet_padded_side" align="left" style="padding:10px 20px;">
+                                                                <img src="https://www.tlumacov.cz/wp-content/uploads/2021/10/logo-pro-mobil-podelne.png" width="160" alt="logo pro mobil podelne" style="height:auto;max-width:100%;border:0;display:block;outline:none;text-align:center;" />
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <!--[if mso]>
+                                                        </td>
+                                                        <td width="330" valign="top">
+                                                <![endif]-->
+                                                <div style="display:inline-block;max-width:330px;vertical-align:top;width:100%;">
+                                                    <table width="330" class="mailpoet_cols-two" cellpadding="0" cellspacing="0" align="left" style="width:100%;max-width:330px;table-layout:fixed;margin:auto;">
+                                                        <tr><td class="mailpoet_spacer" bgcolor="#fff" height="30"></td></tr>
+                                                        <tr>
+                                                            <td class="mailpoet_text mailpoet_padded_vertical mailpoet_padded_side" style="padding:10px 20px;word-break:break-word;">
+                                                                <h3 style="margin:0 0 4.8px;color:#333;font-family:'merriweather sans',helvetica,arial,sans-serif;font-size:16px;line-height:25.6px;text-align:right;">
+                                                                    <span style="color:#ac1424"><strong>@Model.Date.ToString("dd.MM.yyyy")</strong></span>
+                                                                </h3>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <!--[if mso]>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <![endif]-->
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mailpoet_content" align="center" style="border-collapse:collapse">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border-collapse:collapse;padding-left:0;padding-right:0">
+                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                           class="mailpoet_cols-one"
+                                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0;table-layout:fixed;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="mailpoet_text mailpoet_padded_vertical mailpoet_padded_side"
+                                                                    valign="top"
+                                                                    style="border-collapse:collapse;padding-top:10px;padding-bottom:10px;padding-left:20px;padding-right:20px;word-break:break-word;word-wrap:break-word">
+                                                                    <h2 style="margin:0 0 7.2px;mso-ansi-font-size:24px;color:#222222;font-family:'merriweather sans','helvetica neue',helvetica,arial,sans-serif;font-size:24px;line-height:38.4px;mso-line-height-alt:38px;margin-bottom:0;text-align:center;padding:0;font-style:normal;font-weight:normal">
+                                                                        Nové soubory na Úřední desce<strong><br /></strong>
+                                                                    </h2>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="mailpoet_divider" valign="top"
+                                                                    style="border-collapse:collapse;padding:13px 20px 13px 20px">
+                                                                    <table width="100%" border="0" cellpadding="0"
+                                                                           cellspacing="0"
+                                                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0">
+                                                                        <tr>
+                                                                            <td class="mailpoet_divider-cell"
+                                                                                style="border-collapse:collapse;border-top-width:2px;border-top-style:dotted;border-top-color:#ac1424">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mailpoet_content" align="center" style="border-collapse:collapse">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border-collapse:collapse;padding-left:0;padding-right:0">
+                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                           class="mailpoet_cols-one"
+                                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0;table-layout:fixed;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="mailpoet_spacer" bgcolor="#ffffff"
+                                                                    height="20" valign="top"
+                                                                    style="border-collapse:collapse"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="mailpoet_text mailpoet_padded_vertical mailpoet_padded_side" valign="top" style="border-collapse:collapse;padding:10px 20px 10px 20px;word-break:break-word;word-wrap:break-word">
+                                                                    <table class="doc-table" cellpadding="0" cellspacing="0" width="100%" role="presentation">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Název</th>
+                                                                                <th style="width: 15%">Popis</th>
+                                                                                <th style="width: 15%">Soubor</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @foreach (var doc in Model.BoardDocuments)
+                                                                            {
+                                                                                var fileBase = $"{doc.FileName}.{doc.FileExtension}";
+                                                                                var url = $"https://www.tlumacov.cz/wp-content/plugins/uredni-deska/dokumenty/{Uri.EscapeDataString(fileBase)}";
+                                                                                <tr>
+                                                                                    <td>@doc.Name</td>
+                                                                                    <td>@doc.Description</td>
+                                                                                    <td><a class="doc-link" href="@url" target="_blank" rel="noopener noreferrer">@doc.FileName</a></td>
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <p style="font-size:12px;line-height:18px;color:#666666;font-family:'source sans pro','helvetica neue',helvetica,arial,sans-serif;margin:12px 0 0 0;">Toto je automaticky generovaná zpráva.</p>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mailpoet_content" align="center" style="border-collapse:collapse">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border-collapse:collapse;padding-left:0;padding-right:0">
+                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                           class="mailpoet_cols-one"
+                                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0;table-layout:fixed;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="mailpoet_divider" valign="top"
+                                                                    style="border-collapse:collapse;padding:34.5px 20px 34.5px 20px">
+                                                                    <table width="100%" border="0" cellpadding="0"
+                                                                           cellspacing="0"
+                                                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0">
+                                                                        <tr>
+                                                                            <td class="mailpoet_divider-cell"
+                                                                                style="border-collapse:collapse;border-top-width:2px;border-top-style:dotted;border-top-color:#ac1424">
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mailpoet_content-cols-three" align="left" style="border-collapse:collapse">
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                           style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0">
+                                        <tbody>
+                                            <tr>
+                                                <td align="center" style="border-collapse:collapse;font-size:0">
+                                                    <!--[if mso]>
+                                                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                                                  <tbody>
+                                                                    <tr>
+                                                    <td width="220" valign="top">
+                                                      <![endif]-->
+                                                    <div style="display:inline-block; max-width:220px; vertical-align:top; width:100%;">
+                                                        <table width="220" class="mailpoet_cols-three" border="0"
+                                                               cellpadding="0" cellspacing="0" align="right"
+                                                               style="border-collapse:collapse;width:100%;max-width:220px;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0;table-layout:fixed;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="mailpoet_image mailpoet_padded_vertical mailpoet_padded_side"
+                                                                        align="left" valign="top"
+                                                                        style="border-collapse:collapse;padding-top:10px;padding-bottom:10px;padding-left:20px;padding-right:20px">
+                                                                        <img src="https://www.tlumacov.cz/wp-content/uploads/2021/10/logo-pro-mobil-podelne.png"
+                                                                             width="160" alt="logo pro mobil podelne"
+                                                                             style="height:auto;max-width:100%;-ms-interpolation-mode:bicubic;border:0;display:block;outline:none;text-align:center" />
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <!--[if mso]>
+                                                    </td>
+                                                    <td width="220" valign="top">
+                                                      <![endif]-->
+                                                    <div style="display:inline-block; max-width:220px; vertical-align:top; width:100%;">
+                                                        <table width="220" class="mailpoet_cols-three" border="0"
+                                                               cellpadding="0" cellspacing="0" align="right"
+                                                               style="border-collapse:collapse;width:100%;max-width:220px;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0;table-layout:fixed;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0">
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <!--[if mso]>
+                                                    </td>
+                                                    <td width="220" valign="top">
+                                                      <![endif]-->
+                                                    <div style="display:inline-block; max-width:220px; vertical-align:top; width:100%;">
+                                                        <table width="220" class="mailpoet_cols-three" border="0"
+                                                               cellpadding="0" cellspacing="0" align="right"
+                                                               style="border-collapse:collapse;width:100%;max-width:220px;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0;table-layout:fixed;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="mailpoet_text mailpoet_padded_vertical mailpoet_padded_side"
+                                                                        valign="top"
+                                                                        style="border-collapse:collapse;padding-top:10px;padding-bottom:10px;padding-left:20px;padding-right:20px;word-break:break-word;word-wrap:break-word">
+                                                                        <table style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0"
+                                                                               width="100%" cellpadding="0">
+                                                                            <tr>
+                                                                                <td class="mailpoet_paragraph"
+                                                                                    style="border-collapse:collapse;mso-ansi-font-size:16px;color:#000000;font-family:'source sans pro','helvetica neue',helvetica,arial,sans-serif;font-size:15px;line-height:24px;mso-line-height-alt:24px;word-break:break-word;word-wrap:break-word;text-align:center">
+                                                                                    <strong>
+                                                                                        <a href="https://www.tlumacov.cz/odhlaseni-odberu-novinek-z-tlumacova/?mailpoet_router&endpoint=subscription&action=confirm_unsubscribe&data=eyJwcmV2aWV3IjoxfQ"
+                                                                                           style="color:#ac1424;text-decoration:underline">
+                                                                                            Odhlásit
+                                                                                            odběr
+                                                                                        </a>
+                                                                                    </strong>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                        <table style="border-collapse:collapse;border-spacing:0;mso-table-lspace:0;mso-table-rspace:0"
+                                                                               width="100%" cellpadding="0">
+                                                                            <tr>
+                                                                                <td class="mailpoet_paragraph"
+                                                                                    style="border-collapse:collapse;mso-ansi-font-size:16px;color:#000000;font-family:'source sans pro','helvetica neue',helvetica,arial,sans-serif;font-size:15px;line-height:24px;mso-line-height-alt:24px;word-break:break-word;word-wrap:break-word;text-align:center">
+                                                                                    <strong>
+                                                                                        <a href="https://www.tlumacov.cz/zmena-odberu-novinek-z-webu/?mailpoet_router&endpoint=subscription&action=manage&data=eyJwcmV2aWV3IjoxfQ"
+                                                                                           style="color:#ac1424;text-decoration:underline">
+                                                                                            Spravovat
+                                                                                            odběr
+                                                                                        </a>
+                                                                                    </strong>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <!--[if mso]>
+                                                    </td>
+                                                                </tr>
+                                                              </tbody>
+                                                            </table>
+                                                          <![endif]-->
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!--[if mso]>
+                    <!--[if mso]>
+                            </td>
+                        </tr>
+                    </table>
+                    <![endif]-->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
