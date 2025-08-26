@@ -32,16 +32,12 @@ public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSe
             return;
         }
 
-        using var message = new MailMessage
-        {
-            From = new MailAddress(_options.From, _options.DisplayName),
-            Subject = $"Nové dokumenty na Úřední desce Tlumačova ze dne {DateTime.Now:dd.MM.yyyy}",
-            Body = await BuildHtmlFromTemplate(docs),//BuildHtmlBody(docs),
-            IsBodyHtml = true
-        };
-
-        foreach (var r in recipientsList)
-            message.To.Add(r);
+        // Build engine & compile template once for this batch
+        var engine = new RazorLightEngineBuilder()
+            .UseFileSystemProject(Path.Combine(AppContext.BaseDirectory, "Templates"))
+            .UseMemoryCachingProvider()
+            .Build();
+        var compiledTemplate = await engine.CompileTemplateAsync("EmailTemplate.cshtml");
 
         using var client = new SmtpClient(_options.SmtpHost, _options.SmtpPort)
         {
@@ -51,8 +47,31 @@ public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSe
                 : new NetworkCredential(_options.SmtpUser, _options.SmtpPassword)
         };
 
-        await client.SendMailAsync(message, cancellationToken);
-        logger.LogInformation("Email with {Count} unsent document(s) sent to {RecipientCount} recipient(s).", docs.Count, recipientsList.Count);
+        foreach (var recipient in recipientsList)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var model = new EmailTemplateModel
+            {
+                Date = DateTime.Now,
+                BoardDocuments = docs
+            };
+
+            var body = await engine.RenderTemplateAsync(compiledTemplate, model);
+
+            using var message = new MailMessage
+            {
+                From = new MailAddress(_options.From, _options.DisplayName),
+                Subject = $"Nové dokumenty na Úřední desce Tlumačova ze dne {DateTime.Now:dd.MM.yyyy}",
+                Body = body,
+                IsBodyHtml = true
+            };
+            message.To.Add(recipient);
+
+            await client.SendMailAsync(message, cancellationToken);
+        }
+
+        logger.LogInformation("Finished sending {Sent} personalized email(s) with {DocCount} document(s).", recipients.Count(), docs.Count);
     }
 
     public async Task SendTestEmailAsync(CancellationToken cancellationToken = default)
@@ -96,21 +115,5 @@ public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSe
         }
         sb.Append("</tbody></table><p>This is an automated message.</p>");
         return sb.ToString();
-    }
-
-    private async static Task<string> BuildHtmlFromTemplate(IEnumerable<OfficialBoardModel> docs)
-    {
-        var root = AppContext.BaseDirectory;
-        var engine = new RazorLightEngineBuilder()
-            .UseFileSystemProject(Path.Combine(root, "Templates"))
-            .UseMemoryCachingProvider()
-            .Build();
-
-        var model = new EmailTemplateModel { Date = DateTime.Now, BoardDocuments = docs };
-
-        string result = await engine.CompileRenderAsync("EmailTemplate.cshtml", model);
-
-        return result;
-
     }
 }
