@@ -1,20 +1,23 @@
-﻿using System.Text.Json;
+﻿using Microsoft.Extensions.Options;
+using OfficialBoardMailing.Options;
+using System.Text.Json;
 
 namespace OfficialBoardMailing;
 
-public class MailPoetLinkService : IMailPoetLinkService
+public class MailPoetLinkService(IOptions<MailPoetLinkOptions> mailPoetLinkOptions) : IMailPoetLinkService
 {
     private const string BaseUrl = "https://www.tlumacov.cz/?mailpoet_router&endpoint=track&action=click&data=";
+    private readonly MailPoetLinkOptions _options = mailPoetLinkOptions.Value;
 
     public string CreateManageSubscriptionLink(RecipientsModel recipient)
     {
-        var data = new object[] { recipient.Id.ToString(), recipient.LinkToken, "3901", "819f11ae624b", false };
+        var data = new object[] { recipient.Id.ToString(), recipient.LinkToken, _options.QueueId, _options.ManageSubscriptionHash, false };
         return CreateLink(data);
     }
 
     public string CreateUnsubscribeLink(RecipientsModel recipient)
     {
-        var data = new object[] { recipient.Id.ToString(), recipient.LinkToken, "3901", "c66156f17132", false };
+        var data = new object[] { recipient.Id.ToString(), recipient.LinkToken, _options.QueueId, _options.UnsubscribeHash, false };
         return CreateLink(data);
     }
 
