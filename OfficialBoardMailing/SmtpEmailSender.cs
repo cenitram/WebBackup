@@ -19,63 +19,81 @@ public class SmtpEmailSender(
         IEnumerable<RecipientsModel> recipients,
         CancellationToken cancellationToken = default)
     {
-        var docs = documents?.ToList() ?? [];
+        var docs = NormalizeDocuments(documents);
         if (docs.Count == 0)
         {
             logger.LogInformation("No unsent documents to include in email. Skipping send.");
             return;
         }
 
-        var recipientsList = recipients?.Where(r => !string.IsNullOrWhiteSpace(r.Email))
-                                 .ToList() ?? [];
-
+        var recipientsList = NormalizeRecipients(recipients);
         if (recipientsList.Count == 0)
         {
             logger.LogWarning("Email recipients list is empty.");
             return;
         }
 
-        // Build engine & compile template once for this batch
-        var engine = new RazorLightEngineBuilder()
-            .UseFileSystemProject(Path.Combine(AppContext.BaseDirectory, "Templates"))
-            .UseMemoryCachingProvider()
-            .Build();
-        var compiledTemplate = await engine.CompileTemplateAsync("EmailTemplate.cshtml");
-
-        using var client = new SmtpClient(_options.SmtpHost, _options.SmtpPort)
-        {
-            EnableSsl = _options.UseSsl,
-            Credentials = string.IsNullOrWhiteSpace(_options.SmtpUser)
-                ? CredentialCache.DefaultNetworkCredentials
-                : new NetworkCredential(_options.SmtpUser, _options.SmtpPassword)
-        };
+        // Prepare reusable resources
+        var (engine, compiledTemplate) = await PrepareTemplateAsync();
+        using var client = CreateSmtpClient();
 
         foreach (var recipient in recipientsList)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            var model = new EmailTemplateModel
-            {
-                Date = DateTime.Now,
-                BoardDocuments = docs,
-                SubscriptionManagementLink = mailPoetLinkService.CreateManageSubscriptionLink(recipient),
-                UnsubscribeLink = mailPoetLinkService.CreateUnsubscribeLink(recipient),
-            };
-
-            var body = await engine.RenderTemplateAsync(compiledTemplate, model);
-
-            using var message = new MailMessage
-            {
-                From = new MailAddress(_options.From, _options.DisplayName),
-                Subject = $"Nové dokumenty na Úřední desce Tlumačova ze dne {DateTime.Now:dd.MM.yyyy}",
-                Body = body,
-                IsBodyHtml = true
-            };
-            message.To.Add(recipient.Email);
-
-            await client.SendMailAsync(message, cancellationToken);
+            await SendEmailAsync(client, engine, compiledTemplate, docs, recipient, cancellationToken);
         }
 
-        logger.LogInformation("Finished sending {Sent} personalized email(s) with {DocCount} document(s).", recipients.Count(), docs.Count);
+        logger.LogInformation("Finished sending {Sent} personalized email(s) with {DocCount} document(s).", recipientsList.Count, docs.Count);
+    }
+
+    // Helper methods
+    private static List<OfficialBoardModel> NormalizeDocuments(IEnumerable<OfficialBoardModel> documents) => documents?.ToList() ?? [];
+
+    private static List<RecipientsModel> NormalizeRecipients(IEnumerable<RecipientsModel> recipients) =>
+        recipients?.Where(r => !string.IsNullOrWhiteSpace(r.Email)).ToList() ?? [];
+
+    private async Task<(RazorLightEngine engine, ITemplatePage compiledTemplate)> PrepareTemplateAsync()
+    {
+        var engine = new RazorLightEngineBuilder()
+            .UseFileSystemProject(Path.Combine(AppContext.BaseDirectory, "Templates"))
+            .UseMemoryCachingProvider()
+            .Build();
+
+        var compiledTemplate = await engine.CompileTemplateAsync("EmailTemplate.cshtml");
+        return (engine, compiledTemplate);
+    }
+
+    private SmtpClient CreateSmtpClient() => new(_options.SmtpHost, _options.SmtpPort)
+    {
+        EnableSsl = _options.UseSsl,
+        Credentials = string.IsNullOrWhiteSpace(_options.SmtpUser)
+            ? CredentialCache.DefaultNetworkCredentials
+            : new NetworkCredential(_options.SmtpUser, _options.SmtpPassword)
+    };
+
+    private EmailTemplateModel BuildEmailModel(List<OfficialBoardModel> docs, RecipientsModel recipient) => new()
+    {
+        Date = DateTime.Now,
+        BoardDocuments = docs,
+        SubscriptionManagementLink = mailPoetLinkService.CreateManageSubscriptionLink(recipient),
+        UnsubscribeLink = mailPoetLinkService.CreateUnsubscribeLink(recipient),
+    };
+
+    private MailMessage CreateMailMessage(string recipientEmail, string body) => new()
+    {
+        From = new MailAddress(_options.From, _options.DisplayName),
+        Subject = $"Nové dokumenty na Úřední desce Tlumačova ze dne {DateTime.Now:dd.MM.yyyy}",
+        Body = body,
+        IsBodyHtml = true,
+        To = { new MailAddress(recipientEmail) }
+    };
+
+    private async Task SendEmailAsync(SmtpClient client, RazorLightEngine engine, ITemplatePage compiledTemplate, List<OfficialBoardModel> docs, RecipientsModel recipient, CancellationToken cancellationToken)
+    {
+        var model = BuildEmailModel(docs, recipient);
+        var body = await engine.RenderTemplateAsync(compiledTemplate, model);
+
+        using var message = CreateMailMessage(recipient.Email, body);
+        await client.SendMailAsync(message, cancellationToken);
     }
 }
