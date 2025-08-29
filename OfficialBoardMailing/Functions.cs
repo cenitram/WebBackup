@@ -1,16 +1,17 @@
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using OfficialBoardMailing.Options;
 using OfficialBoardMailing.Repositories;
 
 namespace OfficialBoardMailing;
 
 public class Functions(
     ILoggerFactory loggerFactory,
-    IConfiguration config,
     IOfficialBoardRepository officialBoardRepository,
     IRecipientsRepository recipientsRepository,
-    IEmailSender emailSender)
+    IEmailSender emailSender,
+    IOptions<SshOptions> sshOptions)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
@@ -23,19 +24,10 @@ public class Functions(
         {
             _logger.LogInformation("Next timer schedule at: {NextSchedule}", myTimer.ScheduleStatus.Next);
         }
-
-        // Read SSH config as object from local.settings.json
-        var sshConfig = new SshConfig
-        {
-            Host = config["SshHost"] ?? string.Empty,
-            User = config["SshUser"] ?? string.Empty,
-            Password = config["SshPassword"] ?? string.Empty
-        };
-
         var connector = new SshConnector();
         try
         {
-            connector.Connect(sshConfig);
+            connector.Connect(sshOptions.Value);
             _logger.LogInformation("SSH tunnel with port forwarding established successfully.");
 
             var unsentDocuments = officialBoardRepository.GetUnsentDocuments();

@@ -1,3 +1,4 @@
+using OfficialBoardMailing.Options;
 using Renci.SshNet;
 
 namespace OfficialBoardMailing;
@@ -9,7 +10,7 @@ public class SshConnector
 
     public bool IsConnected => _sshClient?.IsConnected ?? false;
 
-    public void Connect(SshConfig sshConfig, int localPort = 3306, int remotePort = 3306)
+    public void Connect(SshOptions sshConfig, int localPort = 3306, int remotePort = 3306)
     {
         // Establish SSH tunnel with port forwarding
         _sshClient = new SshClient(sshConfig.Host, sshConfig.User, sshConfig.Password);

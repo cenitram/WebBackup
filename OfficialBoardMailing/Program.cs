@@ -27,6 +27,7 @@ builder.Services.AddTransient<IMailPoetLinkService, MailPoetLinkService>();
 // Email sender configuration and registration
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
 builder.Services.Configure<MailPoetLinkOptions>(builder.Configuration.GetSection("MailPoetLink"));
+builder.Services.Configure<SshOptions>(builder.Configuration.GetSection("Ssh"));
 builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 builder.Build().Run();
