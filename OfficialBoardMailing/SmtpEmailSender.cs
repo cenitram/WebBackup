@@ -8,11 +8,17 @@ using System.Text;
 
 namespace OfficialBoardMailing;
 
-public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSender> logger) : IEmailSender
+public class SmtpEmailSender(
+    IMailPoetLinkService mailPoetLinkService,
+    IOptions<EmailOptions> options,
+    ILogger<SmtpEmailSender> logger) : IEmailSender
 {
     private readonly EmailOptions _options = options.Value;
 
-    public async Task SendUnsentDocumentsAsync(IEnumerable<OfficialBoardModel> documents, IEnumerable<string> recipients, CancellationToken cancellationToken = default)
+    public async Task SendUnsentDocumentsAsync(
+        IEnumerable<OfficialBoardModel> documents,
+        IEnumerable<RecipientsModel> recipients,
+        CancellationToken cancellationToken = default)
     {
         var docs = documents?.ToList() ?? [];
         if (docs.Count == 0)
@@ -21,9 +27,7 @@ public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSe
             return;
         }
 
-        var recipientsList = recipients?.Where(r => !string.IsNullOrWhiteSpace(r))
-                                 .Select(r => r.Trim())
-                                 .Distinct(StringComparer.OrdinalIgnoreCase)
+        var recipientsList = recipients?.Where(r => !string.IsNullOrWhiteSpace(r.Email))
                                  .ToList() ?? [];
 
         if (recipientsList.Count == 0)
@@ -54,7 +58,9 @@ public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSe
             var model = new EmailTemplateModel
             {
                 Date = DateTime.Now,
-                BoardDocuments = docs
+                BoardDocuments = docs,
+                SubscriptionManagementLink = mailPoetLinkService.CreateManageSubscriptionLink(recipient),
+                UnsubscribeLink = mailPoetLinkService.CreateUnsubscribeLink(recipient),
             };
 
             var body = await engine.RenderTemplateAsync(compiledTemplate, model);
@@ -66,7 +72,7 @@ public class SmtpEmailSender(IOptions<EmailOptions> options, ILogger<SmtpEmailSe
                 Body = body,
                 IsBodyHtml = true
             };
-            message.To.Add(recipient);
+            message.To.Add(recipient.Email);
 
             await client.SendMailAsync(message, cancellationToken);
         }

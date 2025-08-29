@@ -2,5 +2,5 @@
 
 public interface IRecipientsRepository
 {
-    IEnumerable<string> GetRecipientsEmails();
+    IEnumerable<RecipientsModel> GetRecipientsEmails();
 }

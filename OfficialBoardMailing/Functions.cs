@@ -45,7 +45,6 @@ public class Functions(
                 return;
             }
 
-            // TODO: Provide recipients from your own source (e.g., database or app input)
             var recipients = recipientsRepository.GetRecipientsEmails();
 
             if (!recipients.Any())
