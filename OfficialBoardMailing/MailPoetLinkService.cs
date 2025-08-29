@@ -21,7 +21,6 @@ public class MailPoetLinkService(IOptions<MailPoetLinkOptions> mailPoetLinkOptio
         return CreateLink(data);
     }
 
-
     private string CreateLink(object[] data)
     {
         var serializedData = JsonSerializer.Serialize(data);
