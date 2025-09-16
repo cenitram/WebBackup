@@ -82,7 +82,7 @@ public class SmtpEmailSender(
     private MailMessage CreateMailMessage(string recipientEmail, string body) => new()
     {
         From = new MailAddress(_options.From, _options.DisplayName),
-        Subject = $"Nové dokumenty na Úřední desce Tlumačova ze dne {DateTime.Now:dd.MM.yyyy}",
+        Subject = $"Nové dokumenty na úřední desce Obce Tlumačov ze dne {DateTime.Now:dd.MM.yyyy}",
         Body = body,
         IsBodyHtml = true,
         To = { new MailAddress(recipientEmail) }
