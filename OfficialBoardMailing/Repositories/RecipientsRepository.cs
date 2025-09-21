@@ -40,27 +40,24 @@ public class RecipientsRepository(MySqlConnection connection) : IRecipientsRepos
         connection.Open();
         try
         {
-            // Check if already exists
-            const string checkQuery = "SELECT COUNT(*) FROM `wp_uredni_deska_subscribers` WHERE email = @Email;";
-            using (var checkCmd = new MySqlCommand(checkQuery, connection))
-            {
-                checkCmd.Parameters.AddWithValue("@Email", email);
-                var result = checkCmd.ExecuteScalar();
-                var count = Convert.ToInt32(result);
-                if (count > 0)
-                    return false;
-            }
+            // Single atomic operation using ON DUPLICATE KEY UPDATE
+            const string upsertQuery = @"
+                INSERT INTO `wp_uredni_deska_subscribers` 
+                (email, status, unsubscribe_token, subscribed_date) 
+                VALUES (@Email, 'unconfirmed', @Token, NOW())
+                ON DUPLICATE KEY UPDATE 
+                email = email"; // No-op update to detect existing record
 
-            // Insert new subscriber
-            const string insertQuery = @"INSERT INTO `wp_uredni_deska_subscribers` (email, status, unsubscribe_token, subscribed_date) VALUES (@Email, 'unconfirmed', @Token, NOW());";
             string unsubscribeToken = Guid.NewGuid().ToString();
 
-            using var insertCmd = new MySqlCommand(insertQuery, connection);
-            insertCmd.Parameters.AddWithValue("@Email", email);
-            insertCmd.Parameters.AddWithValue("@Token", unsubscribeToken);
-            insertCmd.ExecuteNonQuery();
+            using var cmd = new MySqlCommand(upsertQuery, connection);
+            cmd.Parameters.AddWithValue("@Email", email);
+            cmd.Parameters.AddWithValue("@Token", unsubscribeToken);
 
-            return true;
+            int affectedRows = cmd.ExecuteNonQuery();
+
+            // 1 = new row inserted, 2 = existing row "updated" (duplicate found)
+            return affectedRows == 1;
         }
         finally
         {

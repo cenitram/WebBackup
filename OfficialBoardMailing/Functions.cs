@@ -47,9 +47,7 @@ public class Functions(
                 return;
             }
 
-            var recipientsTest = recipients.Where(x => x.Email == "martinec98@seznam.cz");
-
-            await emailSender.SendUnsentDocumentsAsync(unsentDocuments, recipientsTest);
+            await emailSender.SendUnsentDocumentsAsync(unsentDocuments, recipients);
 
             officialBoardRepository.MarkDocumentsAsSent(unsentDocuments.Select(d => d.Id));
 

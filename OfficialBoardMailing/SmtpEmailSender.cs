@@ -48,6 +48,7 @@ public class SmtpEmailSender(
 
     public async Task SendConfirmationEmailAsync(string toEmail, CancellationToken cancellationToken = default)
     {
+        // In a real implementation, generate a secure token and store it for verification
         var confirmationLink = $"https://example.com/confirm?email={WebUtility.UrlEncode(toEmail)}&token=dummy-token";
         var subject = "Potvrďte svůj odběr oznámení";
         var body = $@"Děkujeme za registraci k odběru oznámení úřední desky.\n\nProsím potvrďte svůj odběr kliknutím na následující odkaz: <a href='{confirmationLink}'>Potvrdit odběr</a>";
