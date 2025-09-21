@@ -1,0 +1,7 @@
+﻿@OfficialBoardMailing_HostAddress = http://localhost:7180
+
+POST {{OfficialBoardMailing_HostAddress}}/api/register-subscriber?code=default
+Content-Type: application/json
+{
+  "Email": "martinec98@gmail.com"
+}
