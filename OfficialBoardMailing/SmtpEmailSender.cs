@@ -46,6 +46,26 @@ public class SmtpEmailSender(
         logger.LogInformation("Finished sending {Sent} personalized email(s) with {DocCount} document(s).", recipientsList.Count, docs.Count);
     }
 
+    public async Task SendConfirmationEmailAsync(string toEmail, CancellationToken cancellationToken = default)
+    {
+        // In a real implementation, generate a secure token and store it for verification
+        var confirmationLink = $"https://example.com/confirm?email={WebUtility.UrlEncode(toEmail)}&token=dummy-token";
+        var subject = "Potvrďte svůj odběr oznámení";
+        var body = $@"Děkujeme za registraci k odběru oznámení úřední desky.\n\nProsím potvrďte svůj odběr kliknutím na následující odkaz: <a href='{confirmationLink}'>Potvrdit odběr</a>";
+
+        using var client = CreateSmtpClient();
+        using var message = new MailMessage
+        {
+            From = new MailAddress(_options.From, _options.DisplayName),
+            Subject = subject,
+            Body = body,
+            IsBodyHtml = true
+        };
+        message.To.Add(new MailAddress(toEmail));
+        await client.SendMailAsync(message, cancellationToken);
+        logger.LogInformation("Confirmation email sent to {Email}", toEmail);
+    }
+
     // Helper methods
     private static List<OfficialBoardModel> NormalizeDocuments(IEnumerable<OfficialBoardModel> documents) => documents?.ToList() ?? [];
 
