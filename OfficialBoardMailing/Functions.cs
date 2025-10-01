@@ -15,7 +15,7 @@ public class Functions(
     IRecipientsRepository recipientsRepository,
     IEmailSender emailSender,
     IOptions<SshOptions> sshOptions,
-    TokenVerificationService tokenVerificationService)
+    ITokenService tokenService)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
@@ -129,7 +129,7 @@ public class Functions(
                 return badResponse;
             }
 
-            var verificationResult = tokenVerificationService.VerifyToken(data.Token);
+            var verificationResult = tokenService.VerifyToken(data.Token);
             if (!verificationResult.IsValid)
             {
                 var invalidResponse = req.CreateResponse(HttpStatusCode.BadRequest);

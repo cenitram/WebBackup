@@ -24,4 +24,11 @@ public interface ITokenService
     /// </summary>
     /// <returns>Secret key bytes</returns>
     byte[] GetSecretKey();
+    
+    /// <summary>
+    /// Verifies a token's validity and returns the verification result
+    /// </summary>
+    /// <param name="token">The token to verify</param>
+    /// <returns>A result object containing verification status and information</returns>
+    TokenVerificationResult VerifyToken(string token);
 }
