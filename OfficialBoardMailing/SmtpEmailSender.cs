@@ -4,14 +4,12 @@ using OfficialBoardMailing.Options;
 using RazorLight;
 using System.Net;
 using System.Net.Mail;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 
 namespace OfficialBoardMailing;
 
 public class SmtpEmailSender(
     IMailPoetLinkService mailPoetLinkService,
+    ITokenService tokenService,
     IOptions<EmailOptions> options,
     ILogger<SmtpEmailSender> logger) : IEmailSender
 {
@@ -51,8 +49,8 @@ public class SmtpEmailSender(
 
     public async Task SendConfirmationEmailAsync(string toEmail, CancellationToken cancellationToken = default)
     {
-        // Create a secure token with subscriber info
-        var token = GenerateSecureToken(toEmail);
+        // Create a secure token with subscriber info using the TokenService
+        var token = tokenService.CreateConfirmationToken(toEmail);
 
         // Create the confirmation link with the token
         var confirmationLink = $"https://localhost:7181/confirm-subscription?token={WebUtility.UrlEncode(token)}";
@@ -75,41 +73,6 @@ public class SmtpEmailSender(
         message.To.Add(new MailAddress(toEmail));
         await client.SendMailAsync(message, cancellationToken);
         logger.LogInformation("Confirmation email sent to {Email}", toEmail);
-    }
-
-    private string GenerateSecureToken(string email)
-    {
-        // Create a payload with subscriber information and expiration
-        var tokenData = new
-        {
-            Email = email,
-            Timestamp = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddHours(24),
-            TokenId = Guid.NewGuid().ToString()
-        };
-
-        // Serialize to JSON
-        string jsonPayload = JsonSerializer.Serialize(tokenData);
-
-        // Create a signature using HMAC
-        using var hmac = new HMACSHA256(GetSecretKey());
-        byte[] payloadBytes = Encoding.UTF8.GetBytes(jsonPayload);
-        byte[] signatureBytes = hmac.ComputeHash(payloadBytes);
-
-        // Encode the payload and signature
-        string base64Payload = Convert.ToBase64String(payloadBytes);
-        string base64Signature = Convert.ToBase64String(signatureBytes);
-
-        // Combine into token format
-        return $"{base64Payload}.{base64Signature}";
-    }
-
-    private byte[] GetSecretKey()
-    {
-        // In production, this should come from secure configuration
-        // This is a placeholder - replace with your actual secret key management
-        string secretKey = _options.TokenSecret ?? "YourVerySecretKeyForTokenGeneration-ShouldBeAtLeast32CharsLong";
-        return Encoding.UTF8.GetBytes(secretKey);
     }
 
     // Helper methods

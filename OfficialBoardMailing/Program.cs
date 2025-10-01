@@ -22,6 +22,7 @@ builder.Services.AddTransient<MySqlConnection>(_ =>
 
 builder.Services.AddTransient<IOfficialBoardRepository, OfficialBoardRepository>();
 builder.Services.AddTransient<IRecipientsRepository, RecipientsRepository>();
+builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IMailPoetLinkService, MailPoetLinkService>();
 builder.Services.AddTransient<TokenVerificationService>();
 

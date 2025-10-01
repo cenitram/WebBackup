@@ -1,20 +1,11 @@
-using Microsoft.Extensions.Options;
-using OfficialBoardMailing.Options;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
 namespace OfficialBoardMailing;
 
-public class TokenVerificationService
+public class TokenVerificationService(ITokenService tokenService)
 {
-    private readonly EmailOptions _options;
-
-    public TokenVerificationService(IOptions<EmailOptions> options)
-    {
-        _options = options.Value;
-    }
-
     public TokenVerificationResult VerifyToken(string token)
     {
         try
@@ -74,8 +65,8 @@ public class TokenVerificationService
                 };
             }
 
-            // Validate the token signature
-            using var hmac = new HMACSHA256(GetSecretKey());
+            // Validate the token signature using the same secret key from TokenService
+            using var hmac = new HMACSHA256(tokenService.GetSecretKey());
             byte[] computedSignature = hmac.ComputeHash(payloadBytes);
 
             // Compare computed signature with received signature
@@ -104,13 +95,6 @@ public class TokenVerificationService
                 Message = $"An error occurred: {ex.Message}"
             };
         }
-    }
-
-    private byte[] GetSecretKey()
-    {
-        // Use the same secret key as in SmtpEmailSender
-        string secretKey = _options.TokenSecret ?? "YourVerySecretKeyForTokenGeneration-ShouldBeAtLeast32CharsLong";
-        return Encoding.UTF8.GetBytes(secretKey);
     }
 
     // Constant-time comparison to prevent timing attacks
