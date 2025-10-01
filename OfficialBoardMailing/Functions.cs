@@ -1,10 +1,11 @@
-using Microsoft.Azure.Functions.Worker;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OfficialBoardMailing.Options;
 using OfficialBoardMailing.Repositories;
 using System.Net;
+using System.Text.Json;
 
 namespace OfficialBoardMailing;
 
@@ -13,7 +14,8 @@ public class Functions(
     IOfficialBoardRepository officialBoardRepository,
     IRecipientsRepository recipientsRepository,
     IEmailSender emailSender,
-    IOptions<SshOptions> sshOptions)
+    IOptions<SshOptions> sshOptions,
+    TokenVerificationService tokenVerificationService)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
@@ -101,6 +103,61 @@ public class Functions(
             logger.LogError(ex, "Error registering subscriber");
             var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
             await errorResponse.WriteStringAsync("Error registering subscriber.");
+            return errorResponse;
+        }
+        finally
+        {
+            connector.Disconnect();
+        }
+    }
+
+    [Function("VerifyToken")]
+    public async Task<HttpResponseData> VerifyToken(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "subscription/verify-token")] HttpRequestData req)
+    {
+        var logger = loggerFactory.CreateLogger("VerifyToken");
+        var connector = new SshConnector();
+        try
+        {
+            connector.Connect(sshOptions.Value);
+            var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var data = JsonSerializer.Deserialize<VerifyTokenRequest>(requestBody, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            if (data is null || string.IsNullOrWhiteSpace(data.Token))
+            {
+                var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+                await badResponse.WriteStringAsync("Invalid request body or missing token.");
+                return badResponse;
+            }
+
+            var verificationResult = tokenVerificationService.VerifyToken(data.Token);
+            if (!verificationResult.IsValid)
+            {
+                var invalidResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+                await invalidResponse.WriteStringAsync(verificationResult.Message);
+                return invalidResponse;
+            }
+
+            // If token is valid, confirm the subscription in the repository
+            var confirmationResult = recipientsRepository.AddRecipient(verificationResult.Email);
+            if (!confirmationResult)
+            {
+                // Subscriber already exists, which is fine in this case
+                logger.LogInformation("Subscription already confirmed for email: {Email}", verificationResult.Email);
+            }
+            else
+            {
+                logger.LogInformation("Subscription confirmed for email: {Email}", verificationResult.Email);
+            }
+
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(verificationResult);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error verifying token");
+            var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
+            await errorResponse.WriteStringAsync("Error verifying token.");
             return errorResponse;
         }
         finally

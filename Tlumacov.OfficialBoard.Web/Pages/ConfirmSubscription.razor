@@ -50,7 +50,7 @@
     }
     
     <div class="actions">
-        <button @onclick="GoToHomePage" class="btn btn-secondary">Zp?t na hlavní stránku</button>
+        <button @onclick="GoToHomePage" class="btn btn-secondary">Zpět na hlavní stránku</button>
     </div>
 </div>
 
@@ -101,7 +101,7 @@
         }
         catch (Exception ex)
         {
-            errorMessage = $"Došlo k chyb?: {ex.Message}";
+            errorMessage = $"Došlo k chybě: {ex.Message}";
         }
         finally
         {
@@ -134,12 +134,12 @@
                 else
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    errorMessage = $"Nepoda?ilo se odeslat nový potvrzovací email: {errorContent}";
+                    errorMessage = $"Nepodařilo se odeslat nový potvrzovací email: {errorContent}";
                 }
             }
             catch (Exception ex)
             {
-                errorMessage = $"Došlo k chyb?: {ex.Message}";
+                errorMessage = $"Došlo k chybě: {ex.Message}";
             }
             finally
             {
