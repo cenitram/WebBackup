@@ -75,7 +75,7 @@ public class Functions(
         {
             connector.Connect(sshOptions.Value);
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var data = System.Text.Json.JsonSerializer.Deserialize<RegisterSubscriberRequest>(requestBody);
+            var data = JsonSerializer.Deserialize<RegisterSubscriberRequest>(requestBody);
             if (data is null || string.IsNullOrWhiteSpace(data.Email))
             {
                 var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);

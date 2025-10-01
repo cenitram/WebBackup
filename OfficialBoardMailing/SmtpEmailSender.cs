@@ -141,7 +141,6 @@ public class SmtpEmailSender(
     {
         Date = DateTime.Now,
         BoardDocuments = docs,
-        SubscriptionManagementLink = mailPoetLinkService.CreateManageSubscriptionLink(recipient),
         UnsubscribeLink = mailPoetLinkService.CreateUnsubscribeLink(recipient),
     };
 
