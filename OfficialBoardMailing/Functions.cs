@@ -137,20 +137,21 @@ public class Functions(
                 return invalidResponse;
             }
 
-            // If token is valid, confirm the subscription in the repository
-            var confirmationResult = recipientsRepository.AddRecipient(verificationResult.Email);
-            if (!confirmationResult)
-            {
-                // Subscriber already exists, which is fine in this case
-                logger.LogInformation("Subscription already confirmed for email: {Email}", verificationResult.Email);
-            }
+            // If token is valid, update the subscriber status to 'subscribed'
+            var confirmationResult = recipientsRepository.ConfirmSubscription(verificationResult.Email);
+
+            if (confirmationResult)
+                logger.LogInformation("Subscription successfully confirmed for email: {Email}", verificationResult.Email);
             else
-            {
-                logger.LogInformation("Subscription confirmed for email: {Email}", verificationResult.Email);
-            }
+                logger.LogInformation("Subscription already confirmed for email: {Email}", verificationResult.Email);
 
             var response = req.CreateResponse(HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(verificationResult);
+            await response.WriteAsJsonAsync(new
+            {
+                IsValid = true,
+                Message = "Your subscription has been confirmed successfully",
+                Email = verificationResult.Email
+            });
             return response;
         }
         catch (Exception ex)
