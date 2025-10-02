@@ -1,0 +1,156 @@
+@page "/unsubscribe"
+@using Tlumacov.OfficialBoard.Web.Services
+@using System.Web
+@using Microsoft.AspNetCore.WebUtilities
+@inject TokenVerifier TokenVerifier
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+<PageTitle>Odhlášení odb?ru</PageTitle>
+
+<link href="css/confirm-subscription.css" rel="stylesheet" />
+
+<div class="confirmation-container">
+    <h1>Odhlášení odb?ru oznámení</h1>
+    
+    @if (isLoading)
+    {
+        <div class="loading">
+            <p>Probíhá ov??ování...</p>
+            <div class="spinner"></div>
+        </div>
+    }
+    else if (result != null && !userConfirmed && !unsubscribeCompleted)
+    {
+        <div class="result @(result.IsValid ? "success" : "error")">
+            <h2>@(result.IsValid ? "Odhlášení odb?ru" : "Chyba p?i odhlášení odb?ru")</h2>
+            <p>@result.Message</p>
+            
+            @if (!string.IsNullOrEmpty(result.Email) && result.IsValid)
+            {
+                <p>Email: @result.Email</p>
+                <p>Pro potvrzení odhlášení z odb?ru oznámení prosím klikn?te na tla?ítko níže.</p>
+                <button @onclick="ConfirmUnsubscribe" class="btn btn-primary">Potvrdit odhlášení z odb?ru</button>
+            }
+        </div>
+    }
+    else if (unsubscribeCompleted)
+    {
+        <div class="result success">
+            <h2>Odb?r byl úsp?šn? zrušen!</h2>
+            <p>Váš email byl úsp?šn? odhlášen z odb?ru oznámení.</p>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="error">
+            <h2>Chyba</h2>
+            <p>@errorMessage</p>
+        </div>
+    }
+    
+    <div class="actions">
+        <button @onclick="GoToHomePage" class="btn btn-secondary">Zp?t na hlavní stránku</button>
+    </div>
+</div>
+
+@code {
+    private bool isLoading = true;
+    private string? token;
+    private TokenVerificationResult? result;
+    private string errorMessage = string.Empty;
+    private bool userConfirmed = false;
+    private bool unsubscribeCompleted = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Parse the token from URL query parameters
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("token", out var tokenParam))
+        {
+            token = tokenParam.First();
+            await VerifyTokenAsync();
+        }
+        else
+        {
+            isLoading = false;
+            errorMessage = "Chybí token pro odhlášení. Zkontrolujte prosím odkaz z e-mailu.";
+        }
+    }
+
+    private async Task VerifyTokenAsync()
+    {
+        try
+        {
+            // Wait a moment to show the loading state
+            await Task.Delay(500);
+            
+            if (!string.IsNullOrEmpty(token))
+            {
+                // Try API verification first
+                result = await TokenVerifier.VerifyTokenAsync(token);
+                
+                // If API call fails, fallback to local validation
+                if (result.Message.Contains("Server verification failed"))
+                {
+                    result = TokenVerifier.ValidateTokenLocally(token);
+                }
+            }
+            else
+            {
+                errorMessage = "Neplatný token.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Došlo k chyb?: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ConfirmUnsubscribe()
+    {
+        if (result != null && result.IsValid && !string.IsNullOrEmpty(result.Email))
+        {
+            userConfirmed = true;
+            isLoading = true;
+            
+            try
+            {
+                // Call API to process the unsubscribe request
+                var response = await Http.PostAsJsonAsync(
+                    "api/subscription/unsubscribe", 
+                    new { Email = result.Email, Token = token });
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    errorMessage = string.Empty;
+                    unsubscribeCompleted = true;
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    errorMessage = $"Nepoda?ilo se odhlásit z odb?ru: {errorContent}";
+                    userConfirmed = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Došlo k chyb?: {ex.Message}";
+                userConfirmed = false;
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+    }
+
+    private void GoToHomePage()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
