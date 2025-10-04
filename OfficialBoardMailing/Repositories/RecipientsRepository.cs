@@ -95,4 +95,36 @@ public class RecipientsRepository(MySqlConnection connection) : IRecipientsRepos
             connection.Close();
         }
     }
+
+    public bool UnsubscribeRecipient(string email)
+    {
+        if (connection == null)
+            throw new InvalidOperationException("Not connected to database.");
+
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ArgumentException("Email cannot be empty", nameof(email));
+
+        connection.Open();
+        try
+        {
+            // Update subscriber status to 'unsubscribed' based on email
+            const string updateQuery = @"
+                UPDATE `wp_uredni_deska_subscribers` 
+                SET status = 'unsubscribed', 
+                    unsubscribed_date = NOW()
+                WHERE email = @Email AND status IN ('subscribed')";
+
+            using var cmd = new MySqlCommand(updateQuery, connection);
+            cmd.Parameters.AddWithValue("@Email", email);
+
+            int affectedRows = cmd.ExecuteNonQuery();
+
+            // Returns true if any row was updated
+            return affectedRows > 0;
+        }
+        finally
+        {
+            connection.Close();
+        }
+    }
 }

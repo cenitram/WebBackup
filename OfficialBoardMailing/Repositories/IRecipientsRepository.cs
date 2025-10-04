@@ -5,4 +5,5 @@ public interface IRecipientsRepository
     IEnumerable<RecipientsModel> GetRecipientsEmails();
     bool AddRecipient(string email);
     bool ConfirmSubscription(string email);
+    bool UnsubscribeRecipient(string email);
 }
