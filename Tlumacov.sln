@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11012.119 d18.0
+VisualStudioVersion = 18.0.11012.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBackup", "WebBackup\WebBackup.csproj", "{7E19D255-31A8-4EC0-8C7A-8F1727D8B8C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfficialBoardMailing", "OfficialBoardMailing\OfficialBoardMailing.csproj", "{FF8E334E-70A0-457E-B404-B0BA18948A47}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tlumacov.OfficialBoard.Web", "Tlumacov.OfficialBoard.Web\Tlumacov.OfficialBoard.Web.csproj", "{5DAC79AE-8033-42D6-990A-F50C395F95E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tlumacov.OfficialBoard.Api", "Tlumacov.OfficialBoard.Api\Tlumacov.OfficialBoard.Api.csproj", "{5338823D-3BF2-4AB5-B8E5-D1565061DDD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{5DAC79AE-8033-42D6-990A-F50C395F95E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DAC79AE-8033-42D6-990A-F50C395F95E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DAC79AE-8033-42D6-990A-F50C395F95E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5338823D-3BF2-4AB5-B8E5-D1565061DDD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5338823D-3BF2-4AB5-B8E5-D1565061DDD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5338823D-3BF2-4AB5-B8E5-D1565061DDD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5338823D-3BF2-4AB5-B8E5-D1565061DDD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
