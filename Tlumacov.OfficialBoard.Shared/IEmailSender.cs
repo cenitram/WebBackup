@@ -1,4 +1,6 @@
-namespace OfficialBoardMailing;
+﻿using Tlumacov.OfficialBoard.Shared.Models;
+
+namespace Tlumacov.OfficialBoard.Shared;
 
 public interface IEmailSender
 {

@@ -1,11 +1,11 @@
-using Microsoft.Azure.Functions.Worker.Builder;
+﻿using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MySqlConnector;
-using OfficialBoardMailing;
-using OfficialBoardMailing.Options;
-using OfficialBoardMailing.Repositories;
+using Tlumacov.OfficialBoard.Shared;
+using Tlumacov.OfficialBoard.Shared.Options;
+using Tlumacov.OfficialBoard.Shared.Repositories;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -27,7 +27,6 @@ builder.Services.AddTransient<IMailPoetLinkService, MailPoetLinkService>();
 
 // Email sender configuration and registration
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
-builder.Services.Configure<MailPoetLinkOptions>(builder.Configuration.GetSection("MailPoetLink"));
 builder.Services.Configure<SshOptions>(builder.Configuration.GetSection("Ssh"));
 builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 

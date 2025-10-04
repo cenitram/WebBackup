@@ -1,6 +1,6 @@
-using System;
+﻿using Tlumacov.OfficialBoard.Shared.Models;
 
-namespace OfficialBoardMailing;
+namespace Tlumacov.OfficialBoard.Shared;
 
 public interface ITokenService
 {
@@ -11,20 +11,20 @@ public interface ITokenService
     /// <param name="expirationTime">Optional expiration time, defaults to 24 hours</param>
     /// <returns>A signed JWT-style token</returns>
     string CreateConfirmationToken(string email, TimeSpan? expirationTime = null);
-    
+
     /// <summary>
     /// Creates a security token for unsubscription
     /// </summary>
     /// <param name="recipient">The recipient model containing the necessary data</param>
     /// <returns>A signed JWT-style token</returns>
     string CreateUnsubscribeToken(RecipientsModel recipient);
-    
+
     /// <summary>
     /// Gets the configured secret key as bytes
     /// </summary>
     /// <returns>Secret key bytes</returns>
     byte[] GetSecretKey();
-    
+
     /// <summary>
     /// Verifies a token's validity and returns the verification result
     /// </summary>

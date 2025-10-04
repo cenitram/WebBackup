@@ -1,6 +1,7 @@
 ﻿using MySqlConnector;
+using Tlumacov.OfficialBoard.Shared.Models;
 
-namespace OfficialBoardMailing.Repositories;
+namespace Tlumacov.OfficialBoard.Shared.Repositories;
 
 public class RecipientsRepository(MySqlConnection connection) : IRecipientsRepository
 {

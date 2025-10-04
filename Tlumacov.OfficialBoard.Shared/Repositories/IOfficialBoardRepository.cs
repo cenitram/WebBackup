@@ -1,4 +1,6 @@
-namespace OfficialBoardMailing.Repositories;
+﻿using Tlumacov.OfficialBoard.Shared.Models;
+
+namespace Tlumacov.OfficialBoard.Shared.Repositories;
 
 public interface IOfficialBoardRepository
 {

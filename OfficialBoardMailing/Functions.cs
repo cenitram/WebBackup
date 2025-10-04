@@ -2,10 +2,11 @@
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using OfficialBoardMailing.Options;
-using OfficialBoardMailing.Repositories;
 using System.Net;
 using System.Text.Json;
+using Tlumacov.OfficialBoard.Shared;
+using Tlumacov.OfficialBoard.Shared.Options;
+using Tlumacov.OfficialBoard.Shared.Repositories;
 
 namespace OfficialBoardMailing;
 
@@ -20,7 +21,7 @@ public class Functions(
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
     [Function("MailNewFilesInOfficialBoard")]
-    public async Task Run([TimerTrigger("0 0 18 * * *", RunOnStartup = false)] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 0 18 * * *", RunOnStartup = true)] TimerInfo myTimer)
     {
         _logger.LogInformation("C# Timer trigger function executed at: {DateTimeNow}", DateTime.Now);
 
@@ -178,7 +179,7 @@ public class Functions(
             connector.Connect(sshOptions.Value);
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var data = JsonSerializer.Deserialize<UnsubscribeRequest>(requestBody, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-            
+
             if (data is null || string.IsNullOrWhiteSpace(data.Email) || string.IsNullOrWhiteSpace(data.Token))
             {
                 var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
@@ -215,7 +216,7 @@ public class Functions(
             await response.WriteAsJsonAsync(new
             {
                 Success = unsubscribeResult,
-                Message = unsubscribeResult 
+                Message = unsubscribeResult
                     ? "You have been successfully unsubscribed from notifications"
                     : "Unable to complete unsubscribe process. You may have already unsubscribed or the email was not found."
             });

@@ -1,10 +1,11 @@
-using Microsoft.Extensions.Options;
-using OfficialBoardMailing.Options;
+﻿using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Tlumacov.OfficialBoard.Shared.Models;
+using Tlumacov.OfficialBoard.Shared.Options;
 
-namespace OfficialBoardMailing;
+namespace Tlumacov.OfficialBoard.Shared;
 
 public class TokenService(IOptions<EmailOptions> options) : ITokenService
 {

@@ -1,4 +1,4 @@
-namespace OfficialBoardMailing.Options;
+﻿namespace Tlumacov.OfficialBoard.Shared.Options;
 
 public class EmailOptions
 {

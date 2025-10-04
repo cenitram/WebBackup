@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using OfficialBoardMailing.Options;
 using RazorLight;
 using System.Net;
 using System.Net.Mail;
+using Tlumacov.OfficialBoard.Shared.Models;
+using Tlumacov.OfficialBoard.Shared.Options;
 
-namespace OfficialBoardMailing;
+namespace Tlumacov.OfficialBoard.Shared;
 
 public class SmtpEmailSender(
     IMailPoetLinkService mailPoetLinkService,

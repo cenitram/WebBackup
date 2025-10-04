@@ -1,7 +1,7 @@
-using OfficialBoardMailing.Options;
-using Renci.SshNet;
+﻿using Renci.SshNet;
+using Tlumacov.OfficialBoard.Shared.Options;
 
-namespace OfficialBoardMailing;
+namespace Tlumacov.OfficialBoard.Shared;
 
 public class SshConnector
 {

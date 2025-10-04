@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.Options;
-using OfficialBoardMailing.Options;
-using System.Net;
+﻿using System.Net;
+using Tlumacov.OfficialBoard.Shared.Models;
 
-namespace OfficialBoardMailing;
+namespace Tlumacov.OfficialBoard.Shared;
 
 public class MailPoetLinkService(ITokenService tokenService) : IMailPoetLinkService
 {

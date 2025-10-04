@@ -17,4 +17,8 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Tlumacov.OfficialBoard.Shared\Tlumacov.OfficialBoard.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

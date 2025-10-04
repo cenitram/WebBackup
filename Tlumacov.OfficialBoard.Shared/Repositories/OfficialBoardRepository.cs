@@ -1,7 +1,8 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MySqlConnector;
+using Tlumacov.OfficialBoard.Shared.Models;
 
-namespace OfficialBoardMailing.Repositories;
+namespace Tlumacov.OfficialBoard.Shared.Repositories;
 
 public class OfficialBoardRepository(MySqlConnection connection, ILogger<OfficialBoardRepository> logger) : IOfficialBoardRepository
 {

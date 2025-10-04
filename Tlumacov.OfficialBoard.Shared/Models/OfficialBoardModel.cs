@@ -1,4 +1,4 @@
-﻿namespace OfficialBoardMailing;
+﻿namespace Tlumacov.OfficialBoard.Shared.Models;
 
 public class OfficialBoardModel
 {
