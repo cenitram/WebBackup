@@ -1,14 +1,32 @@
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Builder;
+﻿using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MySqlConnector;
+using Tlumacov.OfficialBoard.Shared;
+using Tlumacov.OfficialBoard.Shared.Options;
+using Tlumacov.OfficialBoard.Shared.Repositories;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
-builder.Services
-    .AddApplicationInsightsTelemetryWorkerService()
-    .ConfigureFunctionsApplicationInsights();
+//builder.Services
+//    .AddApplicationInsightsTelemetryWorkerService()
+//    .ConfigureFunctionsApplicationInsights();
+
+builder.Services.AddTransient<MySqlConnection>(_ =>
+    new MySqlConnection(builder.Configuration.GetConnectionString("Default"))
+);
+
+builder.Services.AddTransient<IOfficialBoardRepository, OfficialBoardRepository>();
+builder.Services.AddTransient<IRecipientsRepository, RecipientsRepository>();
+builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IMailPoetLinkService, MailPoetLinkService>();
+
+// Email sender configuration and registration
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.Configure<SshOptions>(builder.Configuration.GetSection("Ssh"));
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 builder.Build().Run();

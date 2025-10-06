@@ -13,9 +13,6 @@
 	  </CopyRefAssembliesToPublishDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Templates\EmailTemplate.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Templates\EmailTemplate.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
