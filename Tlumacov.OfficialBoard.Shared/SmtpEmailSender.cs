@@ -53,8 +53,8 @@ public class SmtpEmailSender(
         // Create a secure token with subscriber info using the TokenService
         var token = tokenService.CreateConfirmationToken(toEmail);
 
-        // Create the confirmation link with the token
-        var confirmationLink = $"https://localhost:7181/confirm-subscription?token={WebUtility.UrlEncode(token)}";
+        // Create the confirmation link with the token using the URL from settings
+        var confirmationLink = $"{_options.WebApplicationUrl}/confirm-subscription?token={WebUtility.UrlEncode(token)}";
 
         var subject = "Potvrďte svůj odběr oznámení";
         var body = $@"<html><body>

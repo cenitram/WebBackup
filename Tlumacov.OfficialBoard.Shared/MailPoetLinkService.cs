@@ -1,11 +1,13 @@
-﻿using System.Net;
+﻿using Microsoft.Extensions.Options;
+using System.Net;
 using Tlumacov.OfficialBoard.Shared.Models;
+using Tlumacov.OfficialBoard.Shared.Options;
 
 namespace Tlumacov.OfficialBoard.Shared;
 
-public class MailPoetLinkService(ITokenService tokenService) : IMailPoetLinkService
+public class MailPoetLinkService(ITokenService tokenService, IOptions<EmailOptions> options) : IMailPoetLinkService
 {
-    private const string BaseUrl = "https://localhost:7181/unsubscribe?token=";
+    private readonly EmailOptions _options = options.Value;
 
     public string CreateUnsubscribeLink(RecipientsModel recipient)
     {
@@ -15,6 +17,6 @@ public class MailPoetLinkService(ITokenService tokenService) : IMailPoetLinkServ
         string token = tokenService.CreateUnsubscribeToken(recipient);
 
         // Return the complete URL with the encoded token
-        return $"{BaseUrl}{WebUtility.UrlEncode(token)}";
+        return $"{_options.WebApplicationUrl}/unsubscribe?token={WebUtility.UrlEncode(token)}";
     }
 }
