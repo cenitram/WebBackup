@@ -1,7 +1,15 @@
-﻿@OfficialBoardMailing_HostAddress = http://localhost:7180
+﻿@OfficialBoardMailing_HostAddress = http://localhost:7199
 
 POST {{OfficialBoardMailing_HostAddress}}/api/register-subscriber?code=default
 Content-Type: application/json
 {
   "Email": "martinec98@gmail.com"
+}
+
+###
+
+POST {{OfficialBoardMailing_HostAddress}}/api/subscription/verify-token
+Content-Type: application/json
+{
+  "Token": "eyJFbWFpbCI6Im1hcnRpbmVjOThAZ21haWwuY29tIiwiVGltZXN0YW1wIjoiMjAyNS0wOS0yN1QxMzoyMjo1OS4wMjQ1NTM0WiIsIkV4cGlyZXNBdCI6IjIwMjUtMDktMjhUMTM6MjI6NTkuMDI0NTUzOVoiLCJUb2tlbklkIjoiMzFjYzUzNzktNGY4NS00NDU4LWI5OGUtZWJjNzBlMTIwZDg2In0%3D.EIo%2FjHeMycPKcSS6g4hcL38e2F1E390W0BKfZAxds34%3D"
 }

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -12,9 +12,6 @@
 		  true
 	  </CopyRefAssembliesToPublishDirectory>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Templates\EmailTemplate.cshtml" />
-  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\EmailTemplate.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -33,6 +30,9 @@
     <PackageReference Include="MySqlConnector.DependencyInjection" Version="2.4.0" />
     <PackageReference Include="RazorLight" Version="2.3.1" />
     <PackageReference Include="SSH.NET" Version="2025.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tlumacov.OfficialBoard.Shared\Tlumacov.OfficialBoard.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

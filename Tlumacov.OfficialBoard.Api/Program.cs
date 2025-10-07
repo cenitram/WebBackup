@@ -11,10 +11,9 @@ var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
-// Application Insights isn't enabled by default. See https://aka.ms/AAt8mw4.
-// builder.Services
-//     .AddApplicationInsightsTelemetryWorkerService()
-//     .ConfigureFunctionsApplicationInsights();
+//builder.Services
+//    .AddApplicationInsightsTelemetryWorkerService()
+//    .ConfigureFunctionsApplicationInsights();
 
 builder.Services.AddTransient<MySqlConnection>(_ =>
     new MySqlConnection(builder.Configuration.GetConnectionString("Default"))

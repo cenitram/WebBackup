@@ -1,4 +1,4 @@
-namespace OfficialBoardMailing.Options;
+﻿namespace Tlumacov.OfficialBoard.Shared.Options;
 
 public class EmailOptions
 {
@@ -9,4 +9,6 @@ public class EmailOptions
     public string From { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
     public bool UseSsl { get; set; } = true;
+    public string TokenSecret { get; set; } = string.Empty;
+    public string WebApplicationUrl { get; set; } = "https://localhost:7181";
 }

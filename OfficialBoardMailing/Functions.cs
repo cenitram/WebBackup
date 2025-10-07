@@ -1,10 +1,9 @@
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using OfficialBoardMailing.Options;
-using OfficialBoardMailing.Repositories;
-using System.Net;
+using Tlumacov.OfficialBoard.Shared;
+using Tlumacov.OfficialBoard.Shared.Options;
+using Tlumacov.OfficialBoard.Shared.Repositories;
 
 namespace OfficialBoardMailing;
 
@@ -18,7 +17,7 @@ public class Functions(
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
     [Function("MailNewFilesInOfficialBoard")]
-    public async Task Run([TimerTrigger("0 0 18 * * *", RunOnStartup = false)] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 0 18 * * *", RunOnStartup = true)] TimerInfo myTimer)
     {
         _logger.LogInformation("C# Timer trigger function executed at: {DateTimeNow}", DateTime.Now);
 
@@ -61,56 +60,5 @@ public class Functions(
         {
             connector.Disconnect();
         }
-    }
-
-    [Function("RegisterSubscriber")]
-    public async Task<HttpResponseData> RegisterSubscriber(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "register-subscriber")] HttpRequestData req)
-    {
-        var logger = loggerFactory.CreateLogger("RegisterSubscriber");
-        var connector = new SshConnector();
-        try
-        {
-            connector.Connect(sshOptions.Value);
-            var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var data = System.Text.Json.JsonSerializer.Deserialize<RegisterSubscriberRequest>(requestBody);
-            if (data is null || string.IsNullOrWhiteSpace(data.Email))
-            {
-                var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-                await badResponse.WriteStringAsync("Invalid request body or missing email.");
-                return badResponse;
-            }
-
-            var result = recipientsRepository.AddRecipient(data.Email);
-            if (!result)
-            {
-                var conflictResponse = req.CreateResponse(HttpStatusCode.Conflict);
-                await conflictResponse.WriteStringAsync("Subscriber already exists.");
-                return conflictResponse;
-            }
-
-            // Send confirmation email
-            await emailSender.SendConfirmationEmailAsync(data.Email);
-
-            var response = req.CreateResponse(HttpStatusCode.OK);
-            await response.WriteStringAsync("Subscriber registered successfully. Confirmation email sent.");
-            return response;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error registering subscriber");
-            var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
-            await errorResponse.WriteStringAsync("Error registering subscriber.");
-            return errorResponse;
-        }
-        finally
-        {
-            connector.Disconnect();
-        }
-    }
-
-    private class RegisterSubscriberRequest
-    {
-        public string? Email { get; set; }
     }
 }

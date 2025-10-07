@@ -1,0 +1,155 @@
+﻿@page "/confirm-subscription"
+@using Tlumacov.OfficialBoard.Web.Services
+@using System.Web
+@using Microsoft.AspNetCore.WebUtilities
+@inject TokenVerifier TokenVerifier
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+<PageTitle>Potvrzení odběru</PageTitle>
+
+<link href="css/confirm-subscription.css" rel="stylesheet" />
+
+<div class="confirmation-container">
+    <h1>Potvrzení odběru oznámení</h1>
+    
+    @if (isLoading)
+    {
+        <div class="loading">
+            <p>Probíhá ověřování...</p>
+            <div class="spinner"></div>
+        </div>
+    }
+    else if (result != null)
+    {
+        <div class="result @(result.IsValid ? "success" : "error")">
+            <h2>@(result.IsValid ? "Odběr byl úspěšně potvrzen!" : "Chyba při potvrzení odběru")</h2>
+            <p>@result.Message</p>
+            
+            @if (!string.IsNullOrEmpty(result.Email))
+            {
+                <p>Email: @result.Email</p>
+            }
+            
+            @if (result.IsValid)
+            {
+                <p>Nyní budete dostávat oznámení o novinkách na úřední desce.</p>
+            }
+            else if (!string.IsNullOrEmpty(result.Email) && result.Message.Contains("expired"))
+            {
+                <button @onclick="ResendConfirmation" class="btn btn-primary">Poslat nový potvrzovací email</button>
+            }
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="error">
+            <h2>Chyba</h2>
+            <p>@errorMessage</p>
+        </div>
+    }
+    
+    <div class="actions">
+        <button @onclick="GoToHomePage" class="btn btn-secondary">Zpět na hlavní stránku</button>
+    </div>
+</div>
+
+@code {
+    private bool isLoading = true;
+    private string? token;
+    private TokenVerificationResult? result;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Parse the token from URL query parameters
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue("token", out var tokenParam))
+        {
+            token = tokenParam.First();
+            await VerifyTokenAsync();
+        }
+        else
+        {
+            isLoading = false;
+            errorMessage = "Chybí potvrzovací token. Zkontrolujte prosím odkaz z e-mailu.";
+        }
+    }
+
+    private async Task VerifyTokenAsync()
+    {
+        try
+        {
+            // Wait a moment to show the loading state
+            await Task.Delay(500);
+            
+            if (!string.IsNullOrEmpty(token))
+            {
+                // Try API verification first
+                result = await TokenVerifier.VerifyTokenAsync(token);
+                
+                // If API call fails, fallback to local validation
+                if (result.Message.Contains("Server verification failed"))
+                {
+                    result = TokenVerifier.ValidateTokenLocally(token);
+                }
+            }
+            else
+            {
+                errorMessage = "Neplatný token.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Došlo k chybě: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ResendConfirmation()
+    {
+        if (result != null && !string.IsNullOrEmpty(result.Email))
+        {
+            isLoading = true;
+            try
+            {
+                // Call API to resend confirmation email
+                var response = await Http.PostAsJsonAsync(
+                    "api/subscription/resend-confirmation", 
+                    new { Email = result.Email });
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    errorMessage = string.Empty;
+                    result = new TokenVerificationResult
+                    {
+                        IsValid = true,
+                        Message = "Nový potvrzovací email byl odeslán. Prosím zkontrolujte svou e-mailovou schránku.",
+                        Email = result.Email
+                    };
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    errorMessage = $"Nepodařilo se odeslat nový potvrzovací email: {errorContent}";
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Došlo k chybě: {ex.Message}";
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+    }
+
+    private void GoToHomePage()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
