@@ -5,6 +5,7 @@
 @inject TokenVerifier TokenVerifier
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
+@inject ILogger<ConfirmSubscription> Logger
 
 <PageTitle>Odhlášení odběru</PageTitle>
 
@@ -90,10 +91,9 @@
                 // Try API verification first
                 result = await TokenVerifier.VerifyTokenAsync(token);
                 
-                // If API call fails, fallback to local validation
-                if (result.Message.Contains("Server verification failed"))
+                if (!result.IsValid)
                 {
-                    result = TokenVerifier.ValidateTokenLocally(token);
+                    Logger.LogWarning("Server verification failed, local validation is not available. Message: {0}", result.Message);
                 }
             }
             else
