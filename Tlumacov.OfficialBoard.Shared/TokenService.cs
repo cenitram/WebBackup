@@ -47,7 +47,7 @@ public class TokenService(IOptions<EmailOptions> options) : ITokenService
 
     public byte[] GetSecretKey()
     {
-        string secretKey = _options.TokenSecret ?? "YourVerySecretKeyForTokenGeneration-ShouldBeAtLeast32CharsLong";
+        string secretKey = _options.TokenSecret;
         return Encoding.UTF8.GetBytes(secretKey);
     }
 
