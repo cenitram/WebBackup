@@ -7,11 +7,19 @@
     },
     {
       "route": "/api/*",
-      "allowedRoles": [ "authenticated" ]
+      "methods": [ "POST", "OPTIONS" ],
+      "allowedRoles": [ "anonymous" ],
+      "headers": {
+        "Access-Control-Allow-Origin": "${CLIENT_ORIGIN}",
+        "Access-Control-Allow-Methods": "POST, OPTIONS"
+      }
     }
   ],
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": [ "/api/*" ]
+  },
+  "globalHeaders": {
+    "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
   }
 }
