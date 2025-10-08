@@ -20,7 +20,7 @@ public class Functions(
 {
     [Function("RegisterSubscriber")]
     public async Task<HttpResponseData> RegisterSubscriber(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "register-subscriber")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "register-subscriber")] HttpRequestData req)
     {
         var logger = loggerFactory.CreateLogger("RegisterSubscriber");
         var connector = new SshConnector();
@@ -66,7 +66,7 @@ public class Functions(
 
     [Function("VerifyToken")]
     public async Task<HttpResponseData> VerifyToken(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "subscription/verify-token")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "subscription/verify-token")] HttpRequestData req)
     {
         var logger = loggerFactory.CreateLogger("VerifyToken");
         var connector = new SshConnector();
@@ -122,7 +122,7 @@ public class Functions(
 
     [Function("Unsubscribe")]
     public async Task<HttpResponseData> Unsubscribe(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "subscription/unsubscribe")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "subscription/unsubscribe")] HttpRequestData req)
     {
         var logger = loggerFactory.CreateLogger("Unsubscribe");
         var connector = new SshConnector();
