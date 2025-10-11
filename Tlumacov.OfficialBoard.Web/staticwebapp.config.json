@@ -6,7 +6,8 @@
       "allowedRoles": [ "anonymous" ],
       "headers": {
         "Access-Control-Allow-Origin": "https://www.tlumacov.cz",
-        "Access-Control-Allow-Methods": "POST, OPTIONS"
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
       }
     },
     {
@@ -15,7 +16,8 @@
       "allowedRoles": [ "anonymous" ],
       "headers": {
         "Access-Control-Allow-Origin": "${CLIENT_ORIGIN}",
-        "Access-Control-Allow-Methods": "POST, OPTIONS"
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
       }
     }
   ],
