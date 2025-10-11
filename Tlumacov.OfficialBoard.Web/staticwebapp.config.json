@@ -10,15 +10,6 @@
       }
     },
     {
-      "route": "/api/register-subscriber",
-      "methods": [ "POST", "OPTIONS" ],
-      "allowedRoles": [ "anonymous" ],
-      "headers": {
-        "Access-Control-Allow-Origin": "https://tlumacov.cz",
-        "Access-Control-Allow-Methods": "POST, OPTIONS"
-      }
-    },
-    {
       "route": "/api/*",
       "methods": [ "POST", "OPTIONS" ],
       "allowedRoles": [ "anonymous" ],
