@@ -20,9 +20,18 @@ public class Functions(
 {
     [Function("RegisterSubscriber")]
     public async Task<HttpResponseData> RegisterSubscriber(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "register-subscriber")] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", "options", Route = "register-subscriber")] HttpRequestData req)
     {
         var logger = loggerFactory.CreateLogger("RegisterSubscriber");
+
+        // Handle CORS preflight
+        if (req.Method == "OPTIONS")
+        {
+            var preflightResponse = req.CreateResponse(HttpStatusCode.OK);
+            AddCorsHeaders(preflightResponse);
+            return preflightResponse;
+        }
+
         var connector = new SshConnector();
         try
         {
@@ -32,6 +41,7 @@ public class Functions(
             if (data is null || string.IsNullOrWhiteSpace(data.Email))
             {
                 var badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+                AddCorsHeaders(badResponse);
                 await badResponse.WriteStringAsync("Invalid request body or missing email.");
                 return badResponse;
             }
@@ -40,6 +50,7 @@ public class Functions(
             if (!result)
             {
                 var conflictResponse = req.CreateResponse(HttpStatusCode.Conflict);
+                AddCorsHeaders(conflictResponse);
                 await conflictResponse.WriteStringAsync("Subscriber already exists.");
                 return conflictResponse;
             }
@@ -48,6 +59,7 @@ public class Functions(
             await emailSender.SendConfirmationEmailAsync(data.Email);
 
             var response = req.CreateResponse(HttpStatusCode.OK);
+            AddCorsHeaders(response);
             await response.WriteStringAsync("Subscriber registered successfully. Confirmation email sent.");
             return response;
         }
@@ -55,6 +67,7 @@ public class Functions(
         {
             logger.LogError(ex, "Error registering subscriber");
             var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
+            AddCorsHeaders(errorResponse);
             await errorResponse.WriteStringAsync("Error registering subscriber.");
             return errorResponse;
         }
@@ -185,6 +198,14 @@ public class Functions(
         {
             connector.Disconnect();
         }
+    }
+
+    private static void AddCorsHeaders(HttpResponseData response)
+    {
+        response.Headers.Add("Access-Control-Allow-Origin", "https://www.tlumacov.cz");
+        response.Headers.Add("Access-Control-Allow-Methods", "POST, OPTIONS");
+        response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+        response.Headers.Add("Access-Control-Max-Age", "86400");
     }
 
     private class RegisterSubscriberRequest
