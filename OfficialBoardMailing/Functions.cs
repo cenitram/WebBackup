@@ -17,7 +17,7 @@ public class Functions(
     private readonly ILogger _logger = loggerFactory.CreateLogger<Functions>();
 
     [Function("MailNewFilesInOfficialBoard")]
-    public async Task Run([TimerTrigger("0 0 18 * * *", RunOnStartup = true)] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 0 18 * * *", RunOnStartup = false)] TimerInfo myTimer)
     {
         _logger.LogInformation("C# Timer trigger function executed at: {DateTimeNow}", DateTime.Now);
 
