@@ -25,7 +25,6 @@
     {
         <div class="result @(result.IsValid ? "success" : "error")">
             <h2>@(result.IsValid ? "Odběr byl úspěšně potvrzen!" : "Chyba při potvrzení odběru")</h2>
-            <p>@result.Message</p>
             
             @if (!string.IsNullOrEmpty(result.Email))
             {
@@ -49,10 +48,6 @@
             <p>@errorMessage</p>
         </div>
     }
-    
-    <div class="actions">
-        <button @onclick="GoToHomePage" class="btn btn-secondary">Zpět na hlavní stránku</button>
-    </div>
 </div>
 
 @code {
@@ -145,10 +140,5 @@
                 isLoading = false;
             }
         }
-    }
-
-    private void GoToHomePage()
-    {
-        NavigationManager.NavigateTo("/");
     }
 }

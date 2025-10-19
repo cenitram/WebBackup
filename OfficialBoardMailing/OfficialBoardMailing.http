@@ -1,4 +1,6 @@
-﻿@OfficialBoardMailing_HostAddress = http://localhost:7199
+﻿# @OfficialBoardMailing_HostAddress = http://localhost:7199
+@OfficialBoardMailing_HostAddress = https://victorious-moss-0abdca503.1.azurestaticapps.net
+
 
 POST {{OfficialBoardMailing_HostAddress}}/api/register-subscriber?code=default
 Content-Type: application/json
